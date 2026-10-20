@@ -61,53 +61,71 @@ public class NumeriqueOngletServiceImpl implements NumeriqueOngletService {
 
         AtomicReference<Float> sumEgesEquipementsNumeriques = new AtomicReference<>(0f);
 
-        onglet.getEquipementNumeriqueList().forEach(equipement -> {
-            float egesEquipement;
-            if (equipement.getNombre() > 0) {
-                Float facteurEmission;
-                if (equipement.getEmissionsGesPrecisesConnues()) {
-                    facteurEmission = equipement.getEmissionsReellesParProduitKgCO2e();
-                } else {
-                    facteurEmission = facteurEmissionService.findByCategorieAndType(
-                            FacteurEmissionParametre.NUMERIQUE,
-                            equipement.getEquipement().getLibelle()
-                    ).getFacteurEmission();
+        if (onglet.getEquipementNumeriqueList() != null) {
+            onglet.getEquipementNumeriqueList().forEach(equipement -> {
+                float egesEquipement = 0f;
+                if (equipement.getNombre() > 0) {
+                    Float facteurEmission = 0f;
+                    if (Boolean.TRUE.equals(equipement.getEmissionsGesPrecisesConnues())) {
+                        facteurEmission = equipement.getEmissionsReellesParProduitKgCO2e() != null
+                                ? equipement.getEmissionsReellesParProduitKgCO2e() : 0f;
+                    } else if (equipement.getEquipement() != null) {
+                        try {
+                            facteurEmission = facteurEmissionService.findByCategorieAndType(
+                                    FacteurEmissionParametre.NUMERIQUE,
+                                    equipement.getEquipement().getLibelle()
+                            ).getFacteurEmission();
+                        } catch (Exception e) {
+                            facteurEmission = 0f;
+                        }
+                    }
+
+                    if (facteurEmission == null) {
+                        facteurEmission = 0f;
+                    }
+
+                    if (equipement.getDureeAmortissement() > 0) {
+                        egesEquipement = facteurEmission * equipement.getNombre() / (equipement.getDureeAmortissement() * 1000f);
+                    }
                 }
 
-                if (equipement.getDureeAmortissement() <= 0) {
-                    throw new IllegalArgumentException("La durée d'amortissement doit être supérieure à 0.");
-                }
-                egesEquipement = facteurEmission * equipement.getNombre() / (equipement.getDureeAmortissement() * 1000);
-            } else {
-                egesEquipement = 0f;
-            }
+                Float finalEgesEquipement = egesEquipement;
+                sumEgesEquipementsNumeriques.updateAndGet(v -> v + finalEgesEquipement);
+                resultat.addResultatEquipementNumerique(
+                        equipement.getId(),
+                        egesEquipement
+                );
+            });
+        }
 
-            Float finalEgesEquipement = egesEquipement;
-            sumEgesEquipementsNumeriques.updateAndGet(v -> v + finalEgesEquipement);
-            resultat.addResultatEquipementNumerique(
-                    equipement.getId(),
-                    egesEquipement
-            );
-        });
+        float totalEquipements = sumEgesEquipementsNumeriques.get();
+        resultat.setEmpreinteCarboneEquipements(totalEquipements);
 
-        resultat.setMethodeSimplifieeResultat((sumEgesEquipementsNumeriques.get() / 0.81f) * 0.19f);
-        float trafficCloudReel = onglet.getTraficCloudUtilisateur() + (onglet.getTraficTipUtilisateur() / 0.15f);
-        Float partTraficFranceEtranger = onglet.getPartTraficFranceEtranger();
+        // Méthode simplifiée ADEME : Equipements = 81%, Datacenters + Réseaux = 19%
+        float methodeSimplifiee = (totalEquipements / 0.81f) * 0.19f;
+        resultat.setMethodeSimplifieeResultat(methodeSimplifiee);
+
+        float traficCloud = (onglet.getTraficCloudUtilisateur() != null) ? onglet.getTraficCloudUtilisateur() : 0f;
+        float traficTip = (onglet.getTraficTipUtilisateur() != null) ? onglet.getTraficTipUtilisateur() : 0f;
+        float partTraficFranceEtranger = (onglet.getPartTraficFranceEtranger() != null) ? onglet.getPartTraficFranceEtranger() : 0.55f;
+
+        float trafficCloudReel = traficCloud + (traficTip / 0.15f);
         Float empreinteCarboneDataCenter = (trafficCloudReel * partTraficFranceEtranger * 0.007f * 493f +
-                trafficCloudReel * (1 - partTraficFranceEtranger)
+                trafficCloudReel * (1f - partTraficFranceEtranger)
                         * 0.069f * 57.1f) / 1000000f;
-        resultat.setEmpreinteCarboneDataCenter(
-                empreinteCarboneDataCenter
-        );
+        resultat.setEmpreinteCarboneDataCenter(empreinteCarboneDataCenter);
 
-        if(trafficCloudReel == 0){
-            resultat.setEmpreinteCarboneDataCenterEtReseaux(0f);
-            resultat.setTotalNumerique(sumEgesEquipementsNumeriques.get() + resultat.getMethodeSimplifieeResultat());
-        }else{
-            Float reseau = (sumEgesEquipementsNumeriques.get()/0.81f)*0.05f;
-            Float phaseAmont = (1-partTraficFranceEtranger)*trafficCloudReel*0.0669f*2.58f*0.15f*213.8f/1000000f;
-            resultat.setEmpreinteCarboneDataCenterEtReseaux(empreinteCarboneDataCenter + phaseAmont + reseau);
-            resultat.setTotalNumerique(sumEgesEquipementsNumeriques.get() + resultat.getEmpreinteCarboneDataCenterEtReseaux());
+        if (trafficCloudReel == 0f) {
+            // Pas de données cloud : on applique la méthode simplifiée forfaitaire pour datacenter + réseaux
+            resultat.setEmpreinteCarboneDataCenterEtReseaux(methodeSimplifiee);
+            resultat.setTotalNumerique(totalEquipements + methodeSimplifiee);
+        } else {
+            // Données cloud renseignées
+            Float reseau = (totalEquipements / 0.81f) * 0.05f;
+            Float phaseAmont = (1f - partTraficFranceEtranger) * trafficCloudReel * 0.0669f * 2.58f * 0.15f * 213.8f / 1000000f;
+            Float dataCenterEtReseaux = empreinteCarboneDataCenter + phaseAmont + reseau;
+            resultat.setEmpreinteCarboneDataCenterEtReseaux(dataCenterEtReseaux);
+            resultat.setTotalNumerique(totalEquipements + dataCenterEtReseaux);
         }
 
         return resultat;
