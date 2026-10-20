@@ -9,6 +9,7 @@ import tcucl.back_tcucl.dto.onglet.emissionFugitive.EmissionFugitiveOngletDto;
 import tcucl.back_tcucl.entity.onglet.batiment.BatimentImmobilisationMobilierOnglet;
 import tcucl.back_tcucl.entity.onglet.emissionFugitive.EmissionFugitiveOnglet;
 import tcucl.back_tcucl.entity.onglet.emissionFugitive.MachineEmissionFugitive;
+import tcucl.back_tcucl.entity.onglet.emissionFugitive.enums.EnumEmissionFugitive_TypeMachine;
 import tcucl.back_tcucl.exceptionPersonnalisee.ElementNontrouveException;
 import tcucl.back_tcucl.exceptionPersonnalisee.OngletNonTrouveIdException;
 import tcucl.back_tcucl.exceptionPersonnalisee.ValidationCustomException;
@@ -127,11 +128,16 @@ public class EmissionFugitiveOngletManagerImpl implements EmissionFugitiveOnglet
         }
         if (dto.getTauxDeFuiteConnu() != null) {
             machine.setTauxDeFuiteConnu(dto.getTauxDeFuiteConnu());
+            if (Boolean.TRUE.equals(dto.getTauxDeFuiteConnu())) {
+                machine.setTypeMachine(EnumEmissionFugitive_TypeMachine.NA);
+            } else {
+                machine.setTauxDeFuite(null);
+            }
         }
-        if (dto.getTauxDeFuite() != null) {
+        if (dto.getTauxDeFuite() != null && Boolean.TRUE.equals(machine.getTauxDeFuiteConnu())) {
             machine.setTauxDeFuite(dto.getTauxDeFuite());
         }
-        if (dto.getTypeMachine() != null) {
+        if (dto.getTypeMachine() != null && Boolean.FALSE.equals(machine.getTauxDeFuiteConnu())) {
             machine.setTypeMachine(dto.getTypeMachine());
         }
 
