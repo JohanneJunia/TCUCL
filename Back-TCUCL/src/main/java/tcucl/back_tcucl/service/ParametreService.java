@@ -29,4 +29,6 @@ public interface ParametreService {
     Boolean peutCreerUneNouvelleAnnee();
 
     List<EntiteNomIdDto> getAllEntiteNomId();
+
+    void completerAnneesManquantes();
 }

@@ -43,8 +43,11 @@
     <!-- Container Onglet Trajectoire -->
     <ng-container *ngIf="activeTab === 'trajectoire'">
     
-    <div *ngIf="warnings.length" class="alert info">
+    <div *ngIf="warnings.length || hasIssues" class="alert info">
       <div *ngFor="let w of warnings">{{ w }}</div>
+      <div *ngFor="let item of getIssuesList()" style="margin-top: 4px;">
+        <strong>Année {{ item.year }} :</strong> {{ item.issues.join(' ; ') }}
+      </div>
     </div>
 
     <!-- ============================ -->
@@ -117,6 +120,15 @@
           font-size="11"
         >
           {{ year }}
+        </text>
+
+        <!-- Indicateur d'avertissement si données incomplètes -->
+        <text *ngIf="getYearIssue(year) && getYearRea(i) === null"
+              [attr.x]="getX(i) + barWidth/2"
+              y="242"
+              text-anchor="middle"
+              font-size="12">
+          ⚠️
         </text>
 
                 <!-- Indicateurs référence/cible -->
@@ -510,6 +522,9 @@
       <div class="chart-tooltip__title">{{ getTooltipYear() }}</div>
       <div class="chart-tooltip__row">Objectif&nbsp;: <strong>{{ getTooltipObjectif() }}</strong></div>
       <div class="chart-tooltip__row">Réalisé&nbsp;: <strong>{{ getTooltipRealise() }}</strong></div>
+      <div *ngIf="getYearIssue(getTooltipYear())" class="chart-tooltip__row" style="color: #e67e22; font-style: italic; margin-top: 4px;">
+        ⚠️ {{ getYearIssue(getTooltipYear()) }}
+      </div>
     </div>
 
     <!-- Tooltip HTML overlay pour graphique global -->

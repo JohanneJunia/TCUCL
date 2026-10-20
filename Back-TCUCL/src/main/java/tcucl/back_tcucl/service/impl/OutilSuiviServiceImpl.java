@@ -69,7 +69,13 @@ public class OutilSuiviServiceImpl implements OutilSuiviService {
             try {
                 SyntheseEGESResultatDto base = syntheseEGESService.getSyntheseEGESResultat(entiteId, refYear);
                 baselineTotal = base != null ? base.getBilanCarboneTotalParUsager() : null;
+                if (baselineTotal != null && !Float.isFinite(baselineTotal)) {
+                    baselineTotal = null;
+                }
                 baselineParPoste = extractPosteParUsager(base);
+                if (base != null && (base.getEffectifTotal() == null || base.getEffectifTotal() <= 0)) {
+                    warnings.add("Année de référence " + refYear + " : effectifs non renseignés, objectifs par usager non calculables.");
+                }
             } catch (Exception ex) {
                 warnings.add("Impossible de calculer la référence " + refYear + " : " + ex.getMessage());
             }
@@ -97,16 +103,25 @@ public class OutilSuiviServiceImpl implements OutilSuiviService {
             }
 
             Float reaVal = synth != null ? synth.getBilanCarboneTotalParUsager() : null;
+            if (reaVal != null && !Float.isFinite(reaVal)) {
+                reaVal = null;
+            }
             realise.add(reaVal);
             postesRealiseParAn.put(year, extractPosteParUsagerList(synth));
             indicateursParAn.put(year, new LinkedHashMap<>()); // TODO: indicateurs détaillés à relier aux onglets
-            globalTotals.add(synth != null ? synth.getBilanCarboneTotalGlobal() : null);
+            Float gTotal = synth != null ? synth.getBilanCarboneTotalGlobal() : null;
+            if (gTotal != null && !Float.isFinite(gTotal)) {
+                gTotal = null;
+            }
+            globalTotals.add(gTotal);
 
             Float obj = computeObjectif(year, refYear, targetYear, targetPct, baselineTotal);
             objectif.add(obj);
             postesObjectifParAn.put(year, computePosteObjectifList(year, refYear, targetYear, trajectoire, baselineParPoste));
 
-            if (reaVal == null) {
+            if (synth != null && (synth.getEffectifTotal() == null || synth.getEffectifTotal() <= 0)) {
+                issuesByYear.computeIfAbsent(year, y -> new ArrayList<>()).add("Effectifs non renseignés : valeurs par usager indisponibles.");
+            } else if (reaVal == null) {
                 issuesByYear.computeIfAbsent(year, y -> new ArrayList<>()).add("Aucune donnée validée pour cette année.");
             }
         }
@@ -167,9 +182,17 @@ public class OutilSuiviServiceImpl implements OutilSuiviService {
     private Map<String, Float> extractPosteParUsager(SyntheseEGESResultatDto synth) {
         Map<String, Float> map = new LinkedHashMap<>();
         if (synth == null) return map;
+        if (synth.getEffectifTotal() == null || synth.getEffectifTotal() <= 0) {
+            for (String p : getPostesLabels()) {
+                map.put(p, null);
+            }
+            return map;
+        }
         map.put("Énergie", synth.getEnergieParUsager());
         map.put("Déplacements domicile-travail", synth.getMobiliteDomicileTravailParUsager());
-        Float deplacementPro = safe(synth.getAutreMobiliteFrParUsager()) + safe(synth.getMobiliteInternationalParUsager());
+        Float autreMob = synth.getAutreMobiliteFrParUsager();
+        Float mobInt = synth.getMobiliteInternationalParUsager();
+        Float deplacementPro = (autreMob != null || mobInt != null) ? safe(autreMob) + safe(mobInt) : null;
         map.put("Déplacements professionnels", deplacementPro);
         map.put("Bâtiments et mobilier", synth.getBatimentParkingParUsager());
         map.put("Numérique", synth.getNumeriqueParUsager());
