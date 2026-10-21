@@ -218,32 +218,32 @@
   </div>
   <div *ngIf="resultats" class="bottom-panel">
     <h2>Résultats des émissions GES</h2>
+    <div class="total-highlight">
+      <span class="total-label">Total autres immobilisations</span>
+      <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
+    </div>
     <table class="data-table">
       <thead>
         <tr>
           <th>Poste</th>
-          <th>Valeur (tCO2e/an)</th>
+          <th>Émissions GES</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td>Total poste bâtiment</td>
+          <td>Machines électriques et outillages</td>
           <td>
             {{
-              resultats.totalPosteBatiment !== "NaN"
-                ? resultats.totalPosteBatiment
-                : "0"
-            }}
+              (resultats.totalPosteBatiment && resultats.totalPosteBatiment !== 'NaN' ? resultats.totalPosteBatiment : 0) | number:'1.2-2'
+            }} tCO₂e
           </td>
         </tr>
         <tr>
-          <td>Total poste photovoltaïque</td>
+          <td>Installations photovoltaïques</td>
           <td>
             {{
-              resultats.totalPostePhotovoltaique !== "NaN"
-                ? resultats.totalPostePhotovoltaique
-                : "0"
-            }}
+              (resultats.totalPostePhotovoltaique && resultats.totalPostePhotovoltaique !== 'NaN' ? resultats.totalPostePhotovoltaique : 0) | number:'1.2-2'
+            }} tCO₂e
           </td>
         </tr>
       </tbody>

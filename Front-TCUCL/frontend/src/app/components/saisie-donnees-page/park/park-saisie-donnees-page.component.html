@@ -74,7 +74,7 @@
             <td>{{ parking.type }}</td>
             <td>{{ parking.nombreM2 }}</td>
             <td>{{ parking.typeStructure }}</td>
-            <td>{{ parking.emissionsGesConnues ? (parking.emissionsGesReelles + ' tCO2e/an') : 'N/C' }}</td>
+            <td>{{ parking.emissionsGesConnues ? (parking.emissionsGesReelles + ' tCO₂e/an') : 'N/C' }}</td>
             <td>
               <button (click)="supprimerParking(i)">🗑️</button>
             </td>
@@ -87,12 +87,12 @@
     <table class="result-table">
       <thead>
       <tr>
-        <th>Total des émissions GES pour ce poste (en Tonnes CO₂e)</th>
+        <th>Total des émissions GES (tCO₂e)</th>
       </tr>
       </thead>
       <tbody>
       <tr>
-        <td>{{ totalEmissionGES | number: '1.2-2' }}</td>
+        <td>{{ (totalEmissionGES || 0) | number: '1.2-2' }} tCO₂e</td>
       </tr>
       </tbody>
     </table>

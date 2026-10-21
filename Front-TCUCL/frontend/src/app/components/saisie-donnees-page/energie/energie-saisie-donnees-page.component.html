@@ -121,6 +121,10 @@
     <!-- Tableau des résultats -->
     <div class="right-panel">
       <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total des émissions fluides</span>
+        <span class="total-value">{{ (resultats?.totalPosteFluides || 0) | number:'1.2-2' }} tCO₂e</span>
+      </div>
       <table class="data-table">
         <tbody>
         <tr>
@@ -137,19 +141,19 @@
         </tr>
         <tr>
           <td>Conso finale / m²</td>
-          <td>{{ (resultats?.consoEnergieFinaleParM2 || 0) | number:'1.0-0' }} MWh/m²</td>
+          <td>{{ (resultats?.consoEnergieFinaleParM2 || 0) | number:'1.1-1' }} MWh/m²</td>
         </tr>
         <tr>
           <td>Conso primaire / m²</td>
-          <td>{{ (resultats?.consoEnergiePrimaireParM2 || 0) | number:'1.0-0' }} MWh/m²</td>
+          <td>{{ (resultats?.consoEnergiePrimaireParM2 || 0) | number:'1.1-1' }} MWh/m²</td>
         </tr>
         <tr>
           <td>Intensité carbone / m²</td>
-          <td>{{ (resultats?.intensiteCarboneParM2 || 0) | number:'1.0-0' }} kgCO₂/m²</td>
+          <td>{{ (resultats?.intensiteCarboneParM2 || 0) | number:'1.2-2' }} kgCO₂e/m²</td>
         </tr>
         <tr>
           <td>Intensité carbone moyenne</td>
-          <td>{{ (resultats?.intensiteCarboneMoyenne || 0) | number:'1.0-0' }} kgCO₂</td>
+          <td>{{ (resultats?.intensiteCarboneMoyenne || 0) | number:'1.2-2' }} kgCO₂e</td>
         </tr>
         <tr>
           <td>Surface totale</td>

@@ -32,6 +32,20 @@ export class MobiliteInternationaleSaisieDonneesPageComponent implements OnInit 
   rajouter: boolean = false;
   selectedFile: File | null = null;
 
+  get totalEmissions(): number {
+    if (!this.resultats) return 0;
+    const r = this.resultats;
+    return (Number(r.emissionGesProEuropeTrain) || 0)
+      + (Number(r.emissionGesProEuropeAvion) || 0)
+      + (Number(r.emissionGesProHorsEurope) || 0)
+      + (Number(r.emissionGesStagesEuropeTrain) || 0)
+      + (Number(r.emissionGesStagesEuropeAvion) || 0)
+      + (Number(r.emissionGesStagesHorsEurope) || 0)
+      + (Number(r.emissionGesSemestresEtudiantsEuropeTrain) || 0)
+      + (Number(r.emissionGesSemestresEtudiantsEuropeAvion) || 0)
+      + (Number(r.emissionGesSemestresEtudiantsHorsEurope) || 0);
+  }
+
   /**
    * Voyage saisi dans le formulaire. Tous les champs numériques sont
    * initialisés à 0 pour éviter l'envoi de valeurs null lors du PATCH.

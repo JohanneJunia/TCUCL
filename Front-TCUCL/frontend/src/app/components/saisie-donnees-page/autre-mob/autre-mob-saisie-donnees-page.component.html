@@ -55,44 +55,53 @@
     <!-- PANEL DROIT -->
     <div class="right-panel">
       <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total autre mobilité France</span>
+        <span class="total-value">{{ (resultat?.totalPosteMobiliteFrance || 0) | number:'1.2-2' }} tCO₂e</span>
+      </div>
       <table class="result-table">
         <thead>
         <tr>
-          <th></th>
-          <th>Salarie</th>
-          <th>Etudiant</th>
+          <th>Poste</th>
+          <th>Salarié</th>
+          <th>Étudiant</th>
         </tr>
         </thead>
         <tbody>
         <tr>
+          <td>Émissions GES (tCO₂e)</td>
+          <td>{{ (resultat?.totalSalaries || 0) | number:'1.2-2' }}</td>
+          <td>{{ (resultat?.totalEtudiants || 0) | number:'1.2-2' }}</td>
+        </tr>
+        <tr>
           <td>Distance annuelle moyenne (km)</td>
-          <td>{{ resultat?.distanceAnnuelleMoyenneParUsagerSalarie }}</td>
-          <td>{{ resultat?.distanceAnnuelleMoyenneParUsagerEtudiant }}</td>
+          <td>{{ (resultat?.distanceAnnuelleMoyenneParUsagerSalarie || 0) | number:'1.0-0' }}</td>
+          <td>{{ (resultat?.distanceAnnuelleMoyenneParUsagerEtudiant || 0) | number:'1.0-0' }}</td>
         </tr>
         <tr>
           <td>Voiture thermique (%)</td>
-          <td>{{ resultat?.partModaleVoitureThermiqueSalarie }}</td>
-          <td>{{ resultat?.partModaleVoitureThermiqueEtudiant }}</td>
+          <td>{{ (resultat?.partModaleVoitureThermiqueSalarie || 0) | number:'1.1-1' }}</td>
+          <td>{{ (resultat?.partModaleVoitureThermiqueEtudiant || 0) | number:'1.1-1' }}</td>
         </tr>
         <tr>
           <td>Voiture électrique (%)</td>
-          <td>{{ resultat?.partModaleVoitureElectriqueSalarie }}</td>
-          <td>{{ resultat?.partModaleVoitureElectriqueEtudiant }}</td>
+          <td>{{ (resultat?.partModaleVoitureElectriqueSalarie || 0) | number:'1.1-1' }}</td>
+          <td>{{ (resultat?.partModaleVoitureElectriqueEtudiant || 0) | number:'1.1-1' }}</td>
         </tr>
         <tr>
           <td>Avion (%)</td>
-          <td>{{ resultat?.partModaleAvionSalarie }}</td>
-          <td>{{ resultat?.partModaleAvionEtudiant }}</td>
+          <td>{{ (resultat?.partModaleAvionSalarie || 0) | number:'1.1-1' }}</td>
+          <td>{{ (resultat?.partModaleAvionEtudiant || 0) | number:'1.1-1' }}</td>
         </tr>
         <tr>
           <td>Modes doux (%)</td>
-          <td>{{ resultat?.partModaleModesDouxSalarie }}</td>
-          <td>{{ resultat?.partModaleModesDouxEtudiant }}</td>
+          <td>{{ (resultat?.partModaleModesDouxSalarie || 0) | number:'1.1-1' }}</td>
+          <td>{{ (resultat?.partModaleModesDouxEtudiant || 0) | number:'1.1-1' }}</td>
         </tr>
         <tr>
           <td>Intensité carbone moyenne (kgCO₂e/km)</td>
-          <td>{{ resultat?.intensiteCarboneMoyenSalarie }}</td>
-          <td>{{ resultat?.intensiteCarboneMoyenEtudiant }}</td>
+          <td>{{ (resultat?.intensiteCarboneMoyenSalarie || 0) | number:'1.2-2' }}</td>
+          <td>{{ (resultat?.intensiteCarboneMoyenEtudiant || 0) | number:'1.2-2' }}</td>
         </tr>
         </tbody>
       </table>
