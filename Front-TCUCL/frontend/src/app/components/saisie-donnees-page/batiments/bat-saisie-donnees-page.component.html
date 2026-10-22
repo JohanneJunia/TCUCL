@@ -1,4 +1,10 @@
 <div class="main-container">
+  <!-- Erreur générale (chargement, enregistrement, suppression) -->
+  <div class="alerte alerte-erreur" *ngIf="erreurServeur" role="alert">
+    {{ erreurServeur }}
+    <button type="button" class="alerte-fermer" (click)="erreurServeur = ''" aria-label="Fermer">×</button>
+  </div>
+
   <!-- Section 1 : Parc immobilier -->
   <div class="page-title">
     <h2>Parc immobilier</h2>
@@ -14,12 +20,28 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
   </div>
   <details>
     <summary><strong>Saisir un nouveau bâtiment</strong></summary>
+    <p class="legende-requis"><span class="requis">*</span> Champ obligatoire</p>
 
-    <label>Nom / Adresse :
+    <label>Nom / Adresse <span class="requis">*</span>
       <input type="text" [(ngModel)]="nouveauBatiment.nom_ou_adresse"/>
     </label>
 
-    <label>Date de construction :
+    <label>Avez-vous une ACV de ce bâtiment ? <span class="requis">*</span>
+      <select [(ngModel)]="nouveauBatiment.acvBatimentRealisee">
+        <option [ngValue]="null" disabled>-- Choisir --</option>
+        <option [ngValue]="true">Oui</option>
+        <option [ngValue]="false">Non</option>
+      </select>
+    </label>
+
+    <label *ngIf="nouveauBatiment.acvBatimentRealisee === true">
+      Émissions de GES issues de l'ACV, sur toute la durée de vie (tCO2e) <span class="requis">*</span>
+      <input type="number" min="0" [(ngModel)]="nouveauBatiment.emissionsGesReellesTCO2"/>
+      <small class="aide">La valeur est répartie sur {{ DUREE_AMORTISSEMENT_BATIMENT }} ans dans le calcul.</small>
+    </label>
+
+    <label>Date de construction
+      <span class="requis" *ngIf="nouveauBatiment.acvBatimentRealisee === false">*</span>
       <input type="date" [(ngModel)]="nouveauBatiment.dateConstruction"/>
     </label>
 
@@ -27,18 +49,8 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
       <input type="date" [(ngModel)]="nouveauBatiment.dateDerniereGrosseRenovation"/>
     </label>
 
-    <label>Avez-vous une ACV de ce bâtiment ?
-      <select [(ngModel)]="nouveauBatiment.acvBatimentRealisee">
-        <option [ngValue]="true">Oui</option>
-        <option [ngValue]="false">Non</option>
-      </select>
-    </label>
-
-    <label *ngIf="nouveauBatiment.acvBatimentRealisee">Émissions de GES réelles (tCO2e/an) :
-      <input type="number" [(ngModel)]="nouveauBatiment.emissionsGesReellesTCO2"/>
-    </label>
-
-    <label>Type de bâtiment :
+    <label>Type de bâtiment
+      <span class="requis" *ngIf="nouveauBatiment.acvBatimentRealisee === false">*</span>
       <select [(ngModel)]="nouveauBatiment.typeBatiment">
         <option *ngFor="let type of batimentTypesLibelles" [ngValue]="type.value">
           {{ type.label }}
@@ -46,11 +58,13 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
       </select>
     </label>
 
-    <label>Surface (m²) :
-      <input type="number" [(ngModel)]="nouveauBatiment.surfaceEnM2"/>
+    <label>Surface (m²)
+      <span class="requis" *ngIf="nouveauBatiment.acvBatimentRealisee === false">*</span>
+      <input type="number" min="0" [(ngModel)]="nouveauBatiment.surfaceEnM2"/>
     </label>
 
-    <label>Type de structure :
+    <label>Type de structure
+      <span class="requis" *ngIf="nouveauBatiment.acvBatimentRealisee === false">*</span>
       <select [(ngModel)]="nouveauBatiment.typeStructure">
         <option *ngFor="let structure of structureTypesLibelles" [ngValue]="structure.value">
           {{ structure.label }}
@@ -58,8 +72,17 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
       </select>
     </label>
 
-    <button (click)="ajouterBatiment()">Ajouter ce bâtiment</button>
+    <ul class="erreurs-formulaire" *ngIf="erreursBatiment.length > 0" role="alert">
+      <li *ngFor="let erreur of erreursBatiment">{{ erreur }}</li>
+    </ul>
+
+    <button type="button" (click)="ajouterBatiment()">Ajouter ce bâtiment</button>
   </details>
+
+  <div class="alerte alerte-info" *ngIf="messageInfoBatiment" role="status">
+    {{ messageInfoBatiment }}
+    <button type="button" class="alerte-fermer" (click)="messageInfoBatiment = ''" aria-label="Fermer">×</button>
+  </div>
 
   <div *ngIf="batimentOnglet.batiments.length > 0">
     <h3>Liste des bâtiments saisis</h3>
@@ -70,15 +93,18 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
         <th>Date construction</th>
         <th>Dernière rénovation</th>
         <th>ACV</th>
-        <th>Émissions GES</th>
+        <th>Émissions ACV (tCO2e)</th>
         <th>Type</th>
         <th>Surface (m²)</th>
         <th>Structure</th>
+        <th>Prise en compte {{ anneeBilan }}</th>
+        <th>Émissions (tCO2e/an)</th>
         <th>Action</th>
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let bat of batimentOnglet.batiments; let i = index">
+      <tr *ngFor="let bat of batimentOnglet.batiments; let i = index"
+          [class.ligne-exclue]="statutBatiment(bat).code !== 'compte'">
         <td>{{ bat.nom_ou_adresse }}</td>
         <td>{{ bat.dateConstruction }}</td>
         <td>{{ bat.dateDerniereGrosseRenovation }}</td>
@@ -88,7 +114,13 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
         <td>{{ bat.surfaceEnM2 }}</td>
         <td>{{ getLibelleTypeStructure(bat.typeStructure) }}</td>
         <td>
-          <button (click)="supprimerBatiment(i)">🗑️</button>
+          <span class="statut" [ngClass]="'statut-' + statutBatiment(bat).code" [title]="infobulleStatut(bat)">
+            {{ statutBatiment(bat).libelle }}
+          </span>
+        </td>
+        <td>{{ emissionBatiment(bat) === null ? '–' : (emissionBatiment(bat) | number:'1.0-3') }}</td>
+        <td>
+          <button type="button" (click)="supprimerBatiment(i)" title="Supprimer">🗑️</button>
         </td>
       </tr>
       </tbody>
@@ -108,12 +140,13 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
     </span>
   <details>
     <summary><strong>Saisir une rénovation ponctuelle</strong></summary>
+    <p class="legende-requis"><span class="requis">*</span> Champ obligatoire</p>
 
-    <label>Nom du bâtiment :
+    <label>Nom du bâtiment <span class="requis">*</span>
       <input type="text" [(ngModel)]="nouvelleReno.nom_adresse"/>
     </label>
 
-    <label>Type de travaux :
+    <label>Type de travaux <span class="requis">*</span>
       <select [(ngModel)]="nouvelleReno.typeTravaux">
         <option *ngFor="let travaux of travauxTypesLibelles" [ngValue]="travaux.value">
           {{ travaux.label }}
@@ -121,11 +154,11 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
       </select>
     </label>
 
-    <label>Date des travaux :
+    <label>Date des travaux <span class="requis">*</span>
       <input type="date" [(ngModel)]="nouvelleReno.dateTravaux"/>
     </label>
 
-    <label>Type de bâtiment :
+    <label>Type de bâtiment <span class="requis">*</span>
       <select [(ngModel)]="nouvelleReno.typeBatiment">
         <option *ngFor="let type of batimentTypesLibelles" [ngValue]="type.value">
           {{ type.label }}
@@ -133,15 +166,19 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
       </select>
     </label>
 
-    <label>Surface (m²) :
-      <input type="number" [(ngModel)]="nouvelleReno.surfaceConcernee"/>
+    <label>Surface (m²) <span class="requis">*</span>
+      <input type="number" min="0" [(ngModel)]="nouvelleReno.surfaceConcernee"/>
     </label>
 
-    <label>Durée amortissement (année) :
-      <input type="number" [(ngModel)]="nouvelleReno.dureeAmortissement"/>
+    <label>Durée amortissement (années) <span class="requis">*</span>
+      <input type="number" min="1" [(ngModel)]="nouvelleReno.dureeAmortissement"/>
     </label>
 
-    <button (click)="ajouterEntretien()">Ajouter cette rénovation</button>
+    <ul class="erreurs-formulaire" *ngIf="erreursEntretien.length > 0" role="alert">
+      <li *ngFor="let erreur of erreursEntretien">{{ erreur }}</li>
+    </ul>
+
+    <button type="button" (click)="ajouterEntretien()">Ajouter cette rénovation</button>
   </details>
 
   <div *ngIf="batimentOnglet.entretiens.length > 0">
@@ -167,7 +204,7 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
         <td>{{ reno.surfaceConcernee }}</td>
         <td>{{ reno.dureeAmortissement }}</td>
         <td>
-          <button (click)="supprimerRenovation(i)">🗑️</button>
+          <button type="button" (click)="supprimerRenovation(i)" title="Supprimer">🗑️</button>
         </td>
       </tr>
       </tbody>
@@ -187,8 +224,9 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
     </span>
   <details>
     <summary><strong>Saisir du mobilier</strong></summary>
+    <p class="legende-requis"><span class="requis">*</span> Champ obligatoire</p>
 
-    <label>Type de mobilier :
+    <label>Type de mobilier <span class="requis">*</span>
       <select [(ngModel)]="nouveauMobilier.mobilier">
         <option *ngFor="let type of mobilierTypesLibelles" [ngValue]="type.value">
           {{ type.label }}
@@ -196,19 +234,23 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
       </select>
     </label>
 
-    <label>Nombre :
-      <input type="number" [(ngModel)]="nouveauMobilier.quantite"/>
+    <label>Nombre <span class="requis">*</span>
+      <input type="number" min="1" [(ngModel)]="nouveauMobilier.quantite"/>
     </label>
 
     <label>Poids (kg) :
-      <input type="number" [(ngModel)]="nouveauMobilier.poidsDuProduit"/>
+      <input type="number" min="0" [(ngModel)]="nouveauMobilier.poidsDuProduit"/>
     </label>
 
-    <label>Durée amortissement (année) :
-      <input type="number" [(ngModel)]="nouveauMobilier.dureeAmortissement"/>
+    <label>Durée amortissement (années) <span class="requis">*</span>
+      <input type="number" min="1" [(ngModel)]="nouveauMobilier.dureeAmortissement"/>
     </label>
 
-    <button (click)="ajouterMobilier()">Ajouter ce mobilier</button>
+    <ul class="erreurs-formulaire" *ngIf="erreursMobilier.length > 0" role="alert">
+      <li *ngFor="let erreur of erreursMobilier">{{ erreur }}</li>
+    </ul>
+
+    <button type="button" (click)="ajouterMobilier()">Ajouter ce mobilier</button>
   </details>
 
   <div class="mobilier-table" *ngIf="batimentOnglet.mobiliers.length > 0">
@@ -230,7 +272,7 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
         <td>{{ mobilier.poidsDuProduit }}</td>
         <td>{{ mobilier.dureeAmortissement }}</td>
         <td>
-          <button (click)="supprimerMobilier(i)">🗑️</button>
+          <button type="button" (click)="supprimerMobilier(i)" title="Supprimer">🗑️</button>
         </td>
       </tr>
       </tbody>
@@ -243,21 +285,21 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
       <thead>
       <tr>
         <th>Poste</th>
-        <th>Total (Tonnes CO2e)</th>
+        <th>Total (tCO2e/an)</th>
       </tr>
       </thead>
       <tbody>
       <tr>
         <td>Bâtiment (existant ou neuf construit)</td>
-        <td>{{ totalPosteBatiment }}</td>
+        <td>{{ (totalPosteBatiment ?? 0) | number:'1.0-3' }}</td>
       </tr>
       <tr>
         <td>Entretien courant</td>
-        <td>{{ totalPosteEntretien }}</td>
+        <td>{{ (totalPosteEntretien ?? 0) | number:'1.0-3' }}</td>
       </tr>
       <tr>
         <td>Mobilier électroménager</td>
-        <td>{{ totalPosteMobilier }}</td>
+        <td>{{ (totalPosteMobilier ?? 0) | number:'1.0-3' }}</td>
       </tr>
       </tbody>
     </table>
