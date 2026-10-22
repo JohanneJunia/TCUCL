@@ -72,6 +72,12 @@ export class OutilSuiviPageComponent implements OnInit {
       this.selectedSyntheseYear = year;
       this.fetchSynthese();
   }
+  setTab(tab: 'trajectoire' | 'synthese') {
+    this.activeTab = tab;
+    if (tab === 'synthese') {
+      this.fetchSynthese();
+    }
+  }
 
   useMockData = false;
   warnings: string[] = [];
@@ -114,6 +120,7 @@ export class OutilSuiviPageComponent implements OnInit {
       this.entiteName = found?.nom ?? this.entiteName;
     }
     this.loadAllFromService();
+    this.fetchSynthese();
   }
 
   private loadEntites(token: string) {
@@ -130,6 +137,7 @@ export class OutilSuiviPageComponent implements OnInit {
         }
         if (this.selectedEntiteId) {
           this.loadAllFromService();
+          this.fetchSynthese();
         }
       },
       error: _ => {
@@ -634,7 +642,7 @@ export class OutilSuiviPageComponent implements OnInit {
 
   fetchSynthese(): void {
     let entiteToUse = this.selectedEntiteId;
-    if (!entiteToUse) return;
+    if (entiteToUse === undefined || entiteToUse === null) return;
 
     this.syntheseService
       .getSynthese(entiteToUse, this.selectedSyntheseYear)

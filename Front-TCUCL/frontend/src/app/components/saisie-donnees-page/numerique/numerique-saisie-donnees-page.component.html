@@ -10,10 +10,14 @@
       </span>
   </div>
   <p class="question-title">Disposez-vous de données sur le cloud ?</p>
-  <label><input type="radio" name="hasCloud" [(ngModel)]="donneesCloudDisponibles" [value]="true"
-                (change)="updateData()"/> Oui</label>
-  <label><input type="radio" name="hasCloud" [(ngModel)]="donneesCloudDisponibles" [value]="false"
-                (change)="updateData()"/> Non</label>
+  <label>
+    <input type="radio" name="hasCloud" [checked]="donneesCloudDisponibles === true"
+           (change)="onCloudOptionChange(true)"/> Oui
+  </label>
+  <label>
+    <input type="radio" name="hasCloud" [checked]="donneesCloudDisponibles === false"
+           (change)="onCloudOptionChange(false)"/> Non
+  </label>
 
     <div class="card" *ngIf="donneesCloudDisponibles">
       <label for="cloudTraffic">Trafic cloud (Go)</label>
