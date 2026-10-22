@@ -98,6 +98,15 @@ export class NumeriqueSaisieDonneesPageComponent implements OnInit {
       error: err => console.error("Erreur lors du chargement des données numériques", err)
     });
   }
+  onCloudOptionChange(disponible: boolean): void {
+    this.donneesCloudDisponibles = disponible;
+    if (!disponible) {
+      this.traficCloud = 0;
+      this.tipUtilisateur = 0;
+      this.partTraficFranceEtranger = 0;
+    }
+    this.updateData();
+  }
 
   ajouterEquipement(): void {
     if (

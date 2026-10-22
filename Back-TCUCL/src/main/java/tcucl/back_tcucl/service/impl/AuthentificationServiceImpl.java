@@ -75,7 +75,7 @@ public class AuthentificationServiceImpl implements AuthentificationService {
                 throw new MauvaisIdentifiantsException();
             }
         } catch (Exception e) {
-            logger.error("Erreur lors de l'authentification pour l'utilisateur : " + connexionDto.getEmail());
+            e.printStackTrace(); logger.error("Erreur exacte:", e);
             throw new MauvaisIdentifiantsException();
         }
     }

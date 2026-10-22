@@ -15,12 +15,12 @@
       <div style="display:flex; gap:12px; margin-right:auto;">
         <button class="tab-btn" 
                 [ngClass]="{ 'active': activeTab === 'trajectoire' }"
-                (click)="activeTab = 'trajectoire'">
+                (click)="setTab('trajectoire')">
           Suivi
         </button>
         <button class="tab-btn" 
                 [ngClass]="{ 'active': activeTab === 'synthese' }"
-                (click)="activeTab = 'synthese'">
+                (click)="setTab('synthese')">
           Synthèse EGES
         </button>
       </div>
