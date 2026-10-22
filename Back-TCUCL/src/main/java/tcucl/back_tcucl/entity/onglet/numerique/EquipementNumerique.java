@@ -49,7 +49,7 @@ public class EquipementNumerique {
     }
 
     public int getNombre() {
-        return nombre;
+        return nombre != null ? nombre : 0;
     }
 
     public void setNombre(int nombre) {
@@ -57,7 +57,7 @@ public class EquipementNumerique {
     }
 
     public int getDureeAmortissement() {
-        return dureeAmortissement;
+        return dureeAmortissement != null ? dureeAmortissement : 0;
     }
 
     public void setDureeAmortissement(int dureeAmortissement) {

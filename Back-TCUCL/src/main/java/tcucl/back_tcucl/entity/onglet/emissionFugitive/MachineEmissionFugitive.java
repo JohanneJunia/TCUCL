@@ -24,7 +24,8 @@ public class MachineEmissionFugitive {
     @AssertTrue(message = "Le type de machine doit être vide si le taux de fuite est connu.")
     public Boolean assertTypeMachineVideSiTauxConnu() {
         if (Boolean.TRUE.equals(tauxDeFuiteConnu)) {
-            return valeurEnumTypeMachine == null || valeurEnumTypeMachine == 0;
+            return valeurEnumTypeMachine == null
+                    || valeurEnumTypeMachine.equals(EnumEmissionFugitive_TypeMachine.NA.getCode());
         }
         return true;
     }
@@ -32,6 +33,14 @@ public class MachineEmissionFugitive {
     public Boolean assertTauxVideSiTauxInconnu() {
         if (Boolean.FALSE.equals(tauxDeFuiteConnu)) {
             return tauxDeFuite == null || tauxDeFuite == 0.0f;
+        }
+        return true;
+    }
+    @AssertTrue(message = "Le type de machine doit être renseigné si le taux de fuite n’est pas connu.")
+    public Boolean assertTypeMachineRenseigneSiTauxInconnu() {
+        if (Boolean.FALSE.equals(tauxDeFuiteConnu)) {
+            return valeurEnumTypeMachine != null
+                    && !valeurEnumTypeMachine.equals(EnumEmissionFugitive_TypeMachine.NA.getCode());
         }
         return true;
     }

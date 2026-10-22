@@ -3,6 +3,7 @@ package tcucl.back_tcucl.service.impl;
 import org.springframework.stereotype.Service;
 import tcucl.back_tcucl.dto.ListIdDto;
 import tcucl.back_tcucl.dto.SyntheseEGESResultatDto;
+import tcucl.back_tcucl.entity.onglet.GeneralOnglet;
 import tcucl.back_tcucl.entity.onglet.energie.enums.EnumEnergie_UniteBois;
 import tcucl.back_tcucl.entity.onglet.energie.enums.EnumEnergie_UniteFioul;
 import tcucl.back_tcucl.service.*;
@@ -56,40 +57,30 @@ public class SyntheseEGESServiceImpl implements SyntheseEGESService {
         this.vehiculeOngletService = vehiculeOngletService;
     }
 
-    private float calculerParUsager(float totalGlobal, int totalUsagers) {
-        if (totalUsagers <= 0) {
-            return 0.0f;
-        }
-        return (totalGlobal * 1000.0f) / totalUsagers;
-    }
-
-    private float safeFloat(Float val) {
-        return (val != null && !val.isNaN() && !val.isInfinite()) ? val : 0.0f;
-    }
-
     @Override
     public SyntheseEGESResultatDto getSyntheseEGESResultat(Long entiteId, Integer annee) {
         ListIdDto onglets = null;
         try {
             onglets = anneeService.getongletIdListForEntiteAndAnnee(entiteId, annee);
         } catch (EntityNotFoundException e) {
-            // Si l'année n'existe pas en base pour cette entité, retourner un DTO vide sans déclencher de 500
             return new SyntheseEGESResultatDto();
         }
 
         SyntheseEGESResultatDto syntheseEGESResultatDto = new SyntheseEGESResultatDto();
-        // 1. Gestion sécurisée des usagers (Onglet Général)
+
+        // 1. Gestion des usagers
         int nbEtudiant = 0;
         int nbSalarie = 0;
         Long generalOngletId = onglets != null ? onglets.getGeneralOnglet() : null;
         if (generalOngletId != null) {
-            var generalData = generalOngletService.getGeneralOngletById(generalOngletId);
+            GeneralOnglet generalData = generalOngletService.getGeneralOngletById(generalOngletId);
             if (generalData != null) {
                 if (generalData.getNbEtudiant() != null) nbEtudiant = generalData.getNbEtudiant();
                 if (generalData.getNbSalarie() != null) nbSalarie = generalData.getNbSalarie();
             }
         }
         int totalUsagers = nbEtudiant + nbSalarie;
+        syntheseEGESResultatDto.setEffectifTotal(totalUsagers);
 
         // 2. Émissions fugitives
         Long emissionFugitiveOngletId = onglets != null ? onglets.getEmissionFugitiveOnglet() : null;
@@ -367,5 +358,16 @@ public class SyntheseEGESServiceImpl implements SyntheseEGESService {
         syntheseEGESResultatDto.setEmissionEvitee(totalEvite);
 
         return syntheseEGESResultatDto;
+    }
+
+    private Float calculerParUsager(Float valeurGlobale, int totalUsagers) {
+        if (totalUsagers <= 0 || valeurGlobale == null || !Float.isFinite(valeurGlobale)) {
+            return null;
+        }
+        return (valeurGlobale * 1000f) / totalUsagers;
+    }
+
+    private float safeFloat(Float v) {
+        return (v != null && Float.isFinite(v)) ? v : 0.0f;
     }
 }

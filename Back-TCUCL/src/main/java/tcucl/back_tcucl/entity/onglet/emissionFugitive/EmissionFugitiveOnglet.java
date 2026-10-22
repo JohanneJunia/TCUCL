@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import tcucl.back_tcucl.dto.onglet.emissionFugitive.MachineEmissionFugitiveDto;
 import tcucl.back_tcucl.entity.onglet.Onglet;
+import tcucl.back_tcucl.entity.onglet.emissionFugitive.enums.EnumEmissionFugitive_TypeMachine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,9 +37,16 @@ public class EmissionFugitiveOnglet extends Onglet {
         machineEmissionFugitive.setDescriptionMachine(machineEmissionFugitiveDto.getDescriptionMachine());
         machineEmissionFugitive.setQuantiteFluideKg(machineEmissionFugitiveDto.getQuantiteFluideKg());
         machineEmissionFugitive.setTauxDeFuiteConnu(machineEmissionFugitiveDto.getTauxDeFuiteConnu());
-        machineEmissionFugitive.setTauxDeFuite(machineEmissionFugitiveDto.getTauxDeFuite());
+
+        if (Boolean.TRUE.equals(machineEmissionFugitiveDto.getTauxDeFuiteConnu())) {
+            machineEmissionFugitive.setTauxDeFuite(machineEmissionFugitiveDto.getTauxDeFuite());
+            machineEmissionFugitive.setTypeMachine(EnumEmissionFugitive_TypeMachine.NA);
+        } else {
+            machineEmissionFugitive.setTauxDeFuite(null);
+            machineEmissionFugitive.setTypeMachine(machineEmissionFugitiveDto.getTypeMachine());
+        }
+
         machineEmissionFugitive.setTypeFluide(machineEmissionFugitiveDto.getTypeFluide());
-        machineEmissionFugitive.setTypeMachine(machineEmissionFugitiveDto.getTypeMachine());
 
         this.machinesEmissionFugitive.add(machineEmissionFugitive);
     }

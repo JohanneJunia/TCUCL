@@ -111,10 +111,12 @@ export class EmissFugiSaisieDonneesPageComponent implements OnInit {
     return { value: TypeFluide[key as keyof typeof TypeFluide], label: TypeFluideLabels[TypeFluide[key as keyof typeof TypeFluide]] };
   });
 
-  typeMachineLabelEntries = Object.entries(TypeMachineLabels).map(([key, label]) => ({
-    value: key as TypeMachineEnum,
-    label
-  }));
+  typeMachineLabelEntries = Object.entries(TypeMachineLabels)
+    .filter(([key]) => key !== TypeMachineEnum.NA)
+    .map(([key, label]) => ({
+      value: key as TypeMachineEnum,
+      label
+    }));
 
   machines: any[] = [];
   newMachine: any = {
@@ -123,7 +125,7 @@ export class EmissFugiSaisieDonneesPageComponent implements OnInit {
     quantiteFluideKg: null,
     tauxDeFuiteConnu: true,
     tauxDeFuite: null,
-    typeMachine: ''
+    typeMachine: TypeMachineEnum.NA
   };
 
   fuiteReelleConnue: boolean = true;
@@ -201,24 +203,24 @@ export class EmissFugiSaisieDonneesPageComponent implements OnInit {
     });
   }
 
+  onTauxDeFuiteConnuChange(connu: boolean) {
+    this.newMachine.tauxDeFuiteConnu = connu;
+    if (connu) {
+      this.newMachine.typeMachine = TypeMachineEnum.NA;
+    } else {
+      this.newMachine.tauxDeFuite = null;
+      if (!this.newMachine.typeMachine || this.newMachine.typeMachine === TypeMachineEnum.NA) {
+        this.newMachine.typeMachine = TypeMachineEnum.ARMOIRE;
+      }
+    }
+  }
+
   ajouterMachine() {
     const token = this.authService.getToken(); // Récupère le token
 
-    // Avant d'ajouter la machine, il faut convertir le label en valeur de l'énumération
-    const labelToValueMachine = (label: string) => {
-      const key = Object.keys(TypeMachineEnum).find(
-        key => TypeMachineLabels[TypeMachineEnum[key as keyof typeof TypeMachineEnum]] === label
-      );
-      return key ? TypeMachineEnum[key as keyof typeof TypeMachineEnum] : undefined;
-    };
-
-    const machineToAdd = { ...this.newMachine };
-    console.log(machineToAdd)
-// Conversion des labels
-    if (this.newMachine.tauxDeFuiteConnu) {
-      machineToAdd.typeMachine = "NA"; // Cas où on ne veut pas de saisie
-    } else {
-      machineToAdd.typeMachine = this.newMachine.typeMachine;
+    if (!this.newMachine.descriptionMachine || this.newMachine.descriptionMachine.trim().length === 0) {
+      alert("Veuillez renseigner une description pour la machine.");
+      return;
     }
 
     if (this.newMachine.descriptionMachine.length > 100) {
@@ -226,14 +228,46 @@ export class EmissFugiSaisieDonneesPageComponent implements OnInit {
       return;
     }
 
+    if (!this.newMachine.typeFluide) {
+      alert("Veuillez sélectionner un type de fluide.");
+      return;
+    }
+
+    if (this.newMachine.quantiteFluideKg === null || this.newMachine.quantiteFluideKg === undefined || this.newMachine.quantiteFluideKg <= 0) {
+      alert("La quantité de fluide doit être un nombre supérieur à 0.");
+      return;
+    }
+
+    const machineToAdd = { ...this.newMachine };
+
+    if (this.newMachine.tauxDeFuiteConnu) {
+      if (this.newMachine.tauxDeFuite === null || this.newMachine.tauxDeFuite === undefined || this.newMachine.tauxDeFuite < 0 || this.newMachine.tauxDeFuite > 100) {
+        alert("Le taux de fuite doit être compris entre 0 et 100 %.");
+        return;
+      }
+      machineToAdd.typeMachine = TypeMachineEnum.NA;
+    } else {
+      if (!this.newMachine.typeMachine || this.newMachine.typeMachine === TypeMachineEnum.NA) {
+        alert("Veuillez sélectionner un type de machine.");
+        return;
+      }
+      machineToAdd.tauxDeFuite = null;
+    }
+
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}` // Ajoute le token d'authentification
     };
-    this.emmissionsFugtivesService.addMachine(this.emmissionFugitiveOngletId, machineToAdd, headers).subscribe(() => {
-      this.loadMachines();
-      this.chargerResultatGES();
-      this.resetForm();
+    this.emmissionsFugtivesService.addMachine(this.emmissionFugitiveOngletId, machineToAdd, headers).subscribe({
+      next: () => {
+        this.loadMachines();
+        this.chargerResultatGES();
+        this.resetForm();
+      },
+      error: (err) => {
+        console.error("Erreur lors de l'ajout de la machine", err);
+        alert("Erreur lors de l'enregistrement de la machine.");
+      }
     });
   }
 
@@ -268,7 +302,7 @@ export class EmissFugiSaisieDonneesPageComponent implements OnInit {
       quantiteFluideKg: null,
       tauxDeFuiteConnu: true,
       tauxDeFuite: null,
-      typeMachine: ''
+      typeMachine: TypeMachineEnum.NA
     };
     this.fuiteReelleConnue = true;
   }

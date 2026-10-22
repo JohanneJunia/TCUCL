@@ -92,19 +92,23 @@
   </div>
   <div *ngIf="resultats" class="bottom-panel">
     <h2>Résultats des émissions GES</h2>
+    <div class="total-highlight">
+      <span class="total-label">Total des émissions Numérique</span>
+      <span class="total-value">{{ (resultats.totalNumerique || 0) | number:'1.2-2' }} tCO₂e</span>
+    </div>
     <table class="data-table">
       <tbody>
       <tr>
+        <td>Équipements numériques</td>
+        <td>{{ (resultats.empreinteCarboneEquipements || 0) | number:'1.2-2' }} tCO₂e</td>
+      </tr>
+      <tr *ngIf="donneesCloudDisponibles">
         <td>Empreinte carbone data center</td>
-        <td>{{ resultats.empreinteCarboneDataCenter || 0 }} kgCO2e</td>
+        <td>{{ (resultats.empreinteCarboneDataCenter || 0) | number:'1.2-2' }} tCO₂e</td>
       </tr>
       <tr>
-        <td>Empreinte carbone data center + réseaux</td>
-        <td>{{ resultats.empreinteCarboneDataCenterEtReseaux || 0 }} kgCO2e</td>
-      </tr>
-      <tr>
-        <td>Total numérique</td>
-        <td>{{ resultats.totalNumerique || 0 }} kgCO2e</td>
+        <td>{{ donneesCloudDisponibles ? 'Empreinte carbone data center + réseaux' : 'Estimation forfaitaire data center + réseaux (méthode simplifiée)' }}</td>
+        <td>{{ (resultats.empreinteCarboneDataCenterEtReseaux || 0) | number:'1.2-2' }} tCO₂e</td>
       </tr>
       </tbody>
     </table>

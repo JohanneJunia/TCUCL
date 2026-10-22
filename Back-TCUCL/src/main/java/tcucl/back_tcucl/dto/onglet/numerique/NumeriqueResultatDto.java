@@ -7,9 +7,10 @@ public class NumeriqueResultatDto {
 
     private Map<Long, Float> resultatsEquipementsNumeriques = new HashMap<>();
 
+    private Float empreinteCarboneEquipements = 0f;
     private Float methodeSimplifieeResultat = 0f;
     private Float empreinteCarboneDataCenter = 0f;
-    private Float empreinteCarboneDataCenterEtReseaux= 0f;
+    private Float empreinteCarboneDataCenterEtReseaux = 0f;
 
     private Float totalNumerique = 0f;
 
@@ -28,6 +29,14 @@ public class NumeriqueResultatDto {
         if (resultatsEquipementsNumeriques != null) {
             resultatsEquipementsNumeriques.put(equipementId, resultat);
         }
+    }
+
+    public Float getEmpreinteCarboneEquipements() {
+        return empreinteCarboneEquipements;
+    }
+
+    public void setEmpreinteCarboneEquipements(Float empreinteCarboneEquipements) {
+        this.empreinteCarboneEquipements = empreinteCarboneEquipements;
     }
 
     public Float getMethodeSimplifieeResultat() {

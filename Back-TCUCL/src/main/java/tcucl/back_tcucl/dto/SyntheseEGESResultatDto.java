@@ -39,6 +39,7 @@ public class SyntheseEGESResultatDto {
     private Float deplacementProfessionnel;
     private Float deplacementDomicileTravail;
     private Float bilanCarboneTotalScope;
+    private Integer effectifTotal;
 
     public SyntheseEGESResultatDto() {
     }
@@ -321,5 +322,13 @@ public class SyntheseEGESResultatDto {
 
     public void setBilanCarboneTotalScope(Float bilanCarboneTotalScope) {
         this.bilanCarboneTotalScope = bilanCarboneTotalScope;
+    }
+
+    public Integer getEffectifTotal() {
+        return effectifTotal;
+    }
+
+    public void setEffectifTotal(Integer effectifTotal) {
+        this.effectifTotal = effectifTotal;
     }
 }

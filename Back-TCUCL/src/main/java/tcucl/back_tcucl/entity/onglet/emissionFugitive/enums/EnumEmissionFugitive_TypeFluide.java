@@ -5,6 +5,7 @@ public enum EnumEmissionFugitive_TypeFluide {
     N20(1,"N20"),
     R134a(2,"R134a"),
     R404a(3,"R404a"),
+    R407a(4,"R407a"),
     R407c(5,"R407c"),
     R410a(6,"R410a"),
     R417a(7,"R417a"),

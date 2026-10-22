@@ -52,13 +52,13 @@
               </div>
             </td>
             <td>
-              <div class="text-ellipsis" [title]="machine.tauxDeFuiteConnu ? machine.tauxDeFuite : 'Inconnu'">
-                {{ machine.tauxDeFuiteConnu ? machine.tauxDeFuite : 'Inconnu' }}
+              <div class="text-ellipsis" [title]="machine.tauxDeFuiteConnu ? (machine.tauxDeFuite + ' %') : 'Inconnu'">
+                {{ machine.tauxDeFuiteConnu ? (machine.tauxDeFuite + ' %') : 'Inconnu' }}
               </div>
             </td>
             <td>
-              <div class="text-ellipsis" [title]="machine.typeMachineLabel">
-                {{ machine.typeMachineLabel }}
+              <div class="text-ellipsis" [title]="machine.tauxDeFuiteConnu ? '-' : (machine.typeMachineLabel && machine.typeMachineLabel !== 'NA' ? machine.typeMachineLabel : 'Inconnu')">
+                {{ machine.tauxDeFuiteConnu ? '-' : (machine.typeMachineLabel && machine.typeMachineLabel !== 'NA' ? machine.typeMachineLabel : 'Inconnu') }}
               </div>
             </td>
             <td>
@@ -81,24 +81,25 @@
         <div class="form-group">
           <label for="typeFluide">Type de fluide</label>
           <select id="typeFluide" [(ngModel)]="newMachine.typeFluide">
+            <option value="" disabled selected>Sélectionner un fluide</option>
             <option *ngFor="let entry of typeFluideLabelEntries" [value]="entry.value">{{ entry.label }}</option>
           </select>
         </div>
 
         <div class="form-group">
           <label for="quantiteFluideKg">Quantité de fluide (L ou kg)</label>
-          <input type="number" id="quantiteFluideKg" [(ngModel)]="newMachine.quantiteFluideKg"/>
+          <input type="number" id="quantiteFluideKg" min="0" step="0.1" [(ngModel)]="newMachine.quantiteFluideKg"/>
         </div>
 
         <div class="form-group">
           <label for="tauxDeFuiteConnu">Taux de fuite réel connu ?</label>
           <div>
             <label>
-              <input type="radio" [(ngModel)]="newMachine.tauxDeFuiteConnu" [value]="true"/>
+              <input type="radio" name="tauxDeFuiteConnuRadio" [ngModel]="newMachine.tauxDeFuiteConnu" (ngModelChange)="onTauxDeFuiteConnuChange(true)" [value]="true"/>
               Oui
             </label>
             <label>
-              <input type="radio" [(ngModel)]="newMachine.tauxDeFuiteConnu" [value]="false"/>
+              <input type="radio" name="tauxDeFuiteConnuRadio" [ngModel]="newMachine.tauxDeFuiteConnu" (ngModelChange)="onTauxDeFuiteConnuChange(false)" [value]="false"/>
               Non
             </label>
           </div>
@@ -106,7 +107,7 @@
 
         <div class="form-group" *ngIf="newMachine.tauxDeFuiteConnu">
           <label for="tauxDeFuite">Taux de fuite (%)</label>
-          <input type="number" id="tauxDeFuite" [(ngModel)]="newMachine.tauxDeFuite" placeholder="Taux de fuite (%)"/>
+          <input type="number" id="tauxDeFuite" min="0" max="100" step="0.1" [(ngModel)]="newMachine.tauxDeFuite" placeholder="Taux de fuite (%)"/>
         </div>
 
         <div class="form-group" *ngIf="!newMachine.tauxDeFuiteConnu">
@@ -125,12 +126,12 @@
     <table class="result-table">
       <thead>
       <tr>
-        <th>Total des émissions GES pour ce poste (en Tonnes CO₂e)</th>
+        <th>Total des émissions GES (tCO₂e)</th>
       </tr>
       </thead>
       <tbody>
       <tr>
-        <td>{{ resultatEmissionGES | number: '1.2-2' }}</td>
+        <td>{{ (resultatEmissionGES || 0) | number: '1.2-2' }} tCO₂e</td>
       </tr>
       </tbody>
     </table>

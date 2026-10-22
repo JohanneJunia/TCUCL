@@ -82,6 +82,24 @@ export class OutilSuiviPageComponent implements OnInit {
   useMockData = false;
   warnings: string[] = [];
   issuesByYear: Record<number, string[]> = {};
+
+  get hasIssues(): boolean {
+    return Object.keys(this.issuesByYear || {}).some(k => (this.issuesByYear[Number(k)] || []).length > 0);
+  }
+
+  getIssuesList(): { year: number; issues: string[] }[] {
+    if (!this.issuesByYear) return [];
+    return Object.entries(this.issuesByYear)
+      .map(([y, list]) => ({ year: Number(y), issues: list }))
+      .filter(item => item.issues && item.issues.length > 0)
+      .sort((a, b) => a.year - b.year);
+  }
+
+  getYearIssue(year: number): string | null {
+    const list = this.issuesByYear?.[year];
+    return (list && list.length > 0) ? list.join(' ; ') : null;
+  }
+
   private lastPayload: OutilSuiviResponse | null = null;
   isSuperAdmin = false;
   entiteName = '';

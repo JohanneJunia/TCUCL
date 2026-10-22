@@ -57,6 +57,10 @@ export class DomTravSaisieDonneesPageComponent implements OnInit {
     intensiteCarboneMoyenEtudiants?: number;
   };
 
+  get totalEmissions(): number {
+    return (this.resultats?.totalEtudiants || 0) + (this.resultats?.totalSalaries || 0);
+  }
+
   ngOnInit(): void {
     this.estTermine = this.statusService.getStatus(ONGLET_KEYS.MobiliteDomTrav);
     this.statusService.statuses$.subscribe(s => {

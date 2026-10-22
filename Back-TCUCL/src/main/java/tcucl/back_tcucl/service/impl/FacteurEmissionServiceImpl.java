@@ -42,11 +42,12 @@ public class FacteurEmissionServiceImpl implements FacteurEmissionService {
                 try {
                     String categorie = getCellValue(row.getCell(0));
                     String type = getCellValue(row.getCell(1));
-                    Float facteur = parseFloatSafe(row.getCell(2), sheet);                    String unite = getCellValue(row.getCell(3));
+                    Float facteur = parseFloatSafe(row.getCell(2), sheet);
+                    String unite = getCellValue(row.getCell(3));
                     // Si tu as une colonne pourcentage en cellule 4 :
                     // Double pourcentage = parsePourcentage(row.getCell(4));
 
-                    if (categorie == null || type == null ) {
+                    if (categorie == null || type == null) {
                         System.out.printf("Ligne %d ignorée : données manquantes.%n", i + 1);
                         continue;
                     }
@@ -55,7 +56,7 @@ public class FacteurEmissionServiceImpl implements FacteurEmissionService {
                     fe.setCategorie(categorie.strip());
                     fe.setType(type.strip());
                     fe.setFacteurEmission(facteur);
-                    fe.setUnite(unite.strip());
+                    fe.setUnite(unite != null ? unite.strip() : "");
                     // fe.setPourcentage(pourcentage); // si applicable
 
                     facteurEmissionManager.save(fe);
@@ -71,14 +72,17 @@ public class FacteurEmissionServiceImpl implements FacteurEmissionService {
     }
     @Override
     public FacteurEmission findByCategorieAndTypeAndUnite(String categorie, String type, String unite){
+        String cleanCat = categorie != null ? categorie.strip() : null;
+        String cleanType = type != null ? type.strip() : null;
+        String cleanUnite = unite != null ? unite.strip() : null;
         try {
-            return facteurEmissionManager.findByCategorieAndTypeAndUnite(categorie, type, unite);
+            return facteurEmissionManager.findByCategorieAndTypeAndUnite(cleanCat, cleanType, cleanUnite);
         } catch (NonTrouveGeneralCustomException e) {
-            log.warn("Facteur d'émission introuvable pour categorie={} type={} unite={}, fallback à 0", categorie, type, unite);
+            log.warn("Facteur d'émission introuvable pour categorie={} type={} unite={}, fallback à 0", cleanCat, cleanType, cleanUnite);
             FacteurEmission facteurEmission = new FacteurEmission();
-            facteurEmission.setCategorie(categorie);
-            facteurEmission.setType(type);
-            facteurEmission.setUnite(unite);
+            facteurEmission.setCategorie(cleanCat);
+            facteurEmission.setType(cleanType);
+            facteurEmission.setUnite(cleanUnite);
             facteurEmission.setFacteurEmission(0f);
             return facteurEmission;
         }
@@ -86,13 +90,15 @@ public class FacteurEmissionServiceImpl implements FacteurEmissionService {
 
     @Override
     public FacteurEmission findByCategorieAndType(String categorie, String type) {
+        String cleanCat = categorie != null ? categorie.strip() : null;
+        String cleanType = type != null ? type.strip() : null;
         try {
-            return facteurEmissionManager.findByCategorieAndType(categorie, type);
+            return facteurEmissionManager.findByCategorieAndType(cleanCat, cleanType);
         } catch (NonTrouveGeneralCustomException e) {
-            log.warn("Facteur d'émission introuvable pour categorie={} type={}, fallback à 0", categorie, type);
+            log.warn("Facteur d'émission introuvable pour categorie={} type={}, fallback à 0", cleanCat, cleanType);
             FacteurEmission facteurEmission = new FacteurEmission();
-            facteurEmission.setCategorie(categorie);
-            facteurEmission.setType(type);
+            facteurEmission.setCategorie(cleanCat);
+            facteurEmission.setType(cleanType);
             facteurEmission.setFacteurEmission(0f);
             return facteurEmission;
         }

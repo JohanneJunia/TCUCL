@@ -81,6 +81,13 @@ public class InitialisateurBdd implements CommandLineRunner {
             logger.error("INIT : Erreur lors de la création de l'année universitaire pour toutes les entités: {}", e.getMessage());
         }
 
+        // vérification et complétion des années historiques manquantes depuis 2019
+        try {
+            parametreService.completerAnneesManquantes();
+        } catch (Exception e) {
+            logger.error("INIT : Erreur lors de la complétion des années historiques manquantes : {}", e.getMessage());
+        }
+
         logger.info("----------------  Initialisation de l'application terminée.  ----------------  \n\n");
 
     }

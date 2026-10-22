@@ -17,6 +17,8 @@ import tcucl.back_tcucl.service.*;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static tcucl.back_tcucl.Constante.*;
 
@@ -159,5 +161,35 @@ public class ParametreServiceImpl implements ParametreService {
     public List<EntiteNomIdDto> getAllEntiteNomId() {
         return entiteService.getAllEntites().stream().map(EntiteNomIdDto::new)
                 .toList();
+    }
+
+    @Transactional
+    @Override
+    public void completerAnneesManquantes() {
+        Integer derniereAnnee = applicationParamService.getDerniereAnneeCreee();
+        if (derniereAnnee == null) {
+            derniereAnnee = AnneeConfig.getAnneeCourante();
+        }
+        List<Entite> entites = entiteService.getAllEntites();
+        for (Entite entite : entites) {
+            if ("SUPERADMIN".equalsIgnoreCase(entite.getType())) {
+                continue;
+            }
+            Set<Integer> existingYears = entite.getAnnees() != null
+                    ? entite.getAnnees().stream().map(Annee::getAnneeValeur).collect(Collectors.toSet())
+                    : Set.of();
+            boolean modified = false;
+            for (int y = 2019; y <= derniereAnnee; y++) {
+                if (!existingYears.contains(y)) {
+                    Annee annee = new Annee(y);
+                    entite.addAnnee(annee);
+                    modified = true;
+                    log.info("INIT : Année historique manquante {} créée pour l'entité '{}'", y, entite.getNom());
+                }
+            }
+            if (modified) {
+                entiteService.saveEntite(entite);
+            }
+        }
     }
 }
