@@ -29,6 +29,12 @@ export class SyntheseEgesComponent implements OnInit {
   private currentYear: number = new Date().getFullYear();
   private entiteId?: number;
   consoEnergieFinale?: number;
+  surfaceTotaleBatiments?: number;
+  consoEnergieFinaleParM2?: number;
+  intensiteCarboneParM2?: number;
+  bilanCarboneTotalParM2?: number;
+  bilanCarboneTotalParUsager?: number;
+  effectifTotal?: number;
   establishmentName = '';
   yearRangeLabel = '';
 
@@ -174,6 +180,12 @@ export class SyntheseEgesComponent implements OnInit {
           if (res.consoEnergieFinale != null) {
             this.consoEnergieFinale = res.consoEnergieFinale;
           }
+          this.surfaceTotaleBatiments = res.surfaceTotaleBatiments != null ? Number(res.surfaceTotaleBatiments) : undefined;
+          this.consoEnergieFinaleParM2 = res.consoEnergieFinaleParM2 != null ? Number(res.consoEnergieFinaleParM2) : undefined;
+          this.intensiteCarboneParM2 = res.intensiteCarboneParM2 != null ? Number(res.intensiteCarboneParM2) : undefined;
+          this.bilanCarboneTotalParM2 = res.bilanCarboneTotalParM2 != null ? Number(res.bilanCarboneTotalParM2) : undefined;
+          this.bilanCarboneTotalParUsager = res.bilanCarboneTotalParUsager != null ? Number(res.bilanCarboneTotalParUsager) : undefined;
+          this.effectifTotal = res.effectifTotal != null ? Number(res.effectifTotal) : undefined;
         },
         error: err => console.error('Erreur récupération synthèse', err)
       });

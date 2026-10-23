@@ -532,7 +532,41 @@
       <div class="chart-tooltip__title">{{ getTooltipYearGlobal() }}</div>
       <div class="chart-tooltip__row">Total (tCO₂)&nbsp;: <strong>{{ getTooltipGlobalTotal() }}</strong></div>
       <div class="chart-tooltip__row">Écart vs réf&nbsp;: <strong>{{ getTooltipGlobalDiff() }}</strong></div>
-  </div>
+    </div>
+
+    <!-- Carte Indicateurs au m² et par usager -->
+    <div class="card" style="margin-top:16px;" *ngIf="years && years.length > 0">
+      <h3>Indicateurs d'intensité et surface par année</h3>
+      <div style="font-size:12px; color:#666; margin-bottom:12px;">Surface des bâtiments déclarés et ratios d'intensité carbone / énergie</div>
+      <div style="overflow-x: auto;">
+        <table class="indicator-table" style="width: 100%; font-size: 13px;">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Indicateur</th>
+              <th *ngFor="let y of years">{{ y }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Surface totale déclarée (m²)</strong></td>
+              <td *ngFor="let y of years">{{ getIndicateurVal(y, 'surfaceTotaleBatiments') !== null ? (getIndicateurVal(y, 'surfaceTotaleBatiments') | number:'1.0-0') : '-' }}</td>
+            </tr>
+            <tr>
+              <td><strong>Bilan carbone par m² (kgCO₂e/m²)</strong></td>
+              <td *ngFor="let y of years">{{ getIndicateurVal(y, 'bilanCarboneTotalParM2') !== null ? (getIndicateurVal(y, 'bilanCarboneTotalParM2') | number:'1.0-1') : '-' }}</td>
+            </tr>
+            <tr>
+              <td><strong>Consommation d'énergie finale (kWh/m²)</strong></td>
+              <td *ngFor="let y of years">{{ getIndicateurVal(y, 'consoEnergieFinaleParM2') !== null ? (getIndicateurVal(y, 'consoEnergieFinaleParM2') | number:'1.0-1') : '-' }}</td>
+            </tr>
+            <tr>
+              <td><strong>Bilan carbone par usager (kgCO₂e/usager)</strong></td>
+              <td *ngFor="let y of years">{{ getIndicateurVal(y, 'bilanCarboneTotalParUsager') !== null ? (getIndicateurVal(y, 'bilanCarboneTotalParUsager') | number:'1.0-1') : '-' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </ng-container> <!-- Fin Onglet Trajectoire -->
 
   <!-- Container Onglet Synthèse EGES -->
@@ -585,6 +619,49 @@
           <tr class="total">
             <td>Bilan carbone total</td>
             <td>{{ scopesTotal }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 class="table-title" style="margin-top: 32px;">INDICATEURS DE SURFACE ET INTENSITÉ</h2>
+      <table class="indicator-table">
+        <thead>
+          <tr>
+            <th>Indicateur</th>
+            <th>Valeur</th>
+            <th>Unité</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Surface totale des campus / bâtiments</td>
+            <td>{{ surfaceTotaleBatiments !== undefined ? (surfaceTotaleBatiments | number:'1.0-2') : '-' }}</td>
+            <td>m²</td>
+          </tr>
+          <tr>
+            <td>Effectif total (étudiants + salariés)</td>
+            <td>{{ effectifTotal !== undefined ? effectifTotal : '-' }}</td>
+            <td>usagers</td>
+          </tr>
+          <tr>
+            <td>Bilan carbone par usager</td>
+            <td>{{ bilanCarboneTotalParUsager !== undefined ? (bilanCarboneTotalParUsager | number:'1.0-2') : '-' }}</td>
+            <td>kgCO₂e/usager</td>
+          </tr>
+          <tr>
+            <td>Bilan carbone par m²</td>
+            <td>{{ bilanCarboneTotalParM2 !== undefined ? (bilanCarboneTotalParM2 | number:'1.0-2') : '-' }}</td>
+            <td>kgCO₂e/m²</td>
+          </tr>
+          <tr>
+            <td>Consommation d'énergie finale par m²</td>
+            <td>{{ consoEnergieFinaleParM2 !== undefined ? (consoEnergieFinaleParM2 | number:'1.0-2') : '-' }}</td>
+            <td>kWh/m²</td>
+          </tr>
+          <tr>
+            <td>Intensité carbone de l'énergie par m²</td>
+            <td>{{ intensiteCarboneParM2 !== undefined ? (intensiteCarboneParM2 | number:'1.0-2') : '-' }}</td>
+            <td>kgCO₂e/m²</td>
           </tr>
         </tbody>
       </table>

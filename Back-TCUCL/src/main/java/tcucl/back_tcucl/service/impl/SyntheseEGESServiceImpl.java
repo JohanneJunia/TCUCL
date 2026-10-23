@@ -4,10 +4,12 @@ import org.springframework.stereotype.Service;
 import tcucl.back_tcucl.dto.ListIdDto;
 import tcucl.back_tcucl.dto.SyntheseEGESResultatDto;
 import tcucl.back_tcucl.entity.onglet.GeneralOnglet;
+import tcucl.back_tcucl.entity.onglet.batiment.BatimentExistantOuNeufConstruit;
 import tcucl.back_tcucl.entity.onglet.energie.enums.EnumEnergie_UniteBois;
 import tcucl.back_tcucl.entity.onglet.energie.enums.EnumEnergie_UniteFioul;
 import tcucl.back_tcucl.service.*;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.Objects;
 
 @Service
 public class SyntheseEGESServiceImpl implements SyntheseEGESService {
@@ -97,10 +99,18 @@ public class SyntheseEGESServiceImpl implements SyntheseEGESService {
         // 3. Énergie
         Long energieOngletId = onglets != null ? onglets.getEnergieOnglet() : null;
         Float energieGlobal = 0.0f;
+        Float surfaceTotaleBatiments = 0.0f;
+        Float consoEnergieFinaleParM2 = 0.0f;
+        Float consoEnergiePrimaireParM2 = 0.0f;
+        Float intensiteCarboneParM2 = 0.0f;
         if (energieOngletId != null) {
             var res = energieOngletService.getEnergieResultat(energieOngletId);
             if (res != null) {
                 energieGlobal = safeFloat(res.getTotalPosteFluides());
+                surfaceTotaleBatiments = safeFloat(res.getSurfaceTotaleBatiments());
+                consoEnergieFinaleParM2 = safeFloat(res.getConsoEnergieFinaleParM2());
+                consoEnergiePrimaireParM2 = safeFloat(res.getConsoEnergiePrimaireParM2());
+                intensiteCarboneParM2 = safeFloat(res.getIntensiteCarboneParM2());
             }
         }
         syntheseEGESResultatDto.setEnergieGlobal(energieGlobal);
@@ -187,6 +197,19 @@ public class SyntheseEGESServiceImpl implements SyntheseEGESService {
             }
         }
 
+        if (surfaceTotaleBatiments == 0.0f && batimentImmobilisationMobilierOngletId != null) {
+            try {
+                var batOnglet = batimentImmobilisationMobilierOngletService.getBatimentImmobilisationMobilierOngletById(batimentImmobilisationMobilierOngletId);
+                if (batOnglet != null && batOnglet.getBatimentExistantOuNeufConstruits() != null) {
+                    surfaceTotaleBatiments = batOnglet.getBatimentExistantOuNeufConstruits().stream()
+                            .map(BatimentExistantOuNeufConstruit::getSurfaceEnM2)
+                            .filter(Objects::nonNull)
+                            .reduce(0f, Float::sum);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+
         Float batimentParkingGlobal = totalPosteBatiment + totalPosteEntretien + totalPosteMobilier + totalEmissionGESParking;
         syntheseEGESResultatDto.setBatimentParkingGlobal(batimentParkingGlobal);
         syntheseEGESResultatDto.setBatimentParkingParUsager(calculerParUsager(batimentParkingGlobal, totalUsagers));
@@ -263,6 +286,16 @@ public class SyntheseEGESServiceImpl implements SyntheseEGESService {
 
         syntheseEGESResultatDto.setBilanCarboneTotalGlobal(bilanCarboneTotalGlobal);
         syntheseEGESResultatDto.setBilanCarboneTotalParUsager(calculerParUsager(bilanCarboneTotalGlobal, totalUsagers));
+
+        syntheseEGESResultatDto.setSurfaceTotaleBatiments(surfaceTotaleBatiments);
+        syntheseEGESResultatDto.setConsoEnergieFinaleParM2(consoEnergieFinaleParM2);
+        syntheseEGESResultatDto.setConsoEnergiePrimaireParM2(consoEnergiePrimaireParM2);
+        syntheseEGESResultatDto.setIntensiteCarboneParM2(intensiteCarboneParM2);
+        if (surfaceTotaleBatiments != null && surfaceTotaleBatiments > 0 && bilanCarboneTotalGlobal > 0) {
+            syntheseEGESResultatDto.setBilanCarboneTotalParM2((bilanCarboneTotalGlobal * 1000f) / surfaceTotaleBatiments);
+        } else {
+            syntheseEGESResultatDto.setBilanCarboneTotalParM2(0.0f);
+        }
 
         // 13. Calcul des Scopes
         float amontFioul = 571.0f;

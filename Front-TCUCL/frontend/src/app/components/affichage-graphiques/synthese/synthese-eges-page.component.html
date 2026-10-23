@@ -61,6 +61,49 @@
           </tr>
         </tbody>
       </table>
+
+      <h2 class="table-title">INDICATEURS DE SURFACE ET INTENSITÉ</h2>
+      <table class="indicator-table">
+        <thead>
+          <tr>
+            <th>Indicateur</th>
+            <th>Valeur</th>
+            <th>Unité</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Surface totale des campus / bâtiments</td>
+            <td>{{ surfaceTotaleBatiments !== undefined ? (surfaceTotaleBatiments | number:'1.0-2') : '-' }}</td>
+            <td>m²</td>
+          </tr>
+          <tr>
+            <td>Effectif total (étudiants + salariés)</td>
+            <td>{{ effectifTotal !== undefined ? effectifTotal : '-' }}</td>
+            <td>usagers</td>
+          </tr>
+          <tr>
+            <td>Bilan carbone par usager</td>
+            <td>{{ bilanCarboneTotalParUsager !== undefined ? (bilanCarboneTotalParUsager | number:'1.0-2') : '-' }}</td>
+            <td>kgCO₂e/usager</td>
+          </tr>
+          <tr>
+            <td>Bilan carbone par m²</td>
+            <td>{{ bilanCarboneTotalParM2 !== undefined ? (bilanCarboneTotalParM2 | number:'1.0-2') : '-' }}</td>
+            <td>kgCO₂e/m²</td>
+          </tr>
+          <tr>
+            <td>Consommation d'énergie finale par m²</td>
+            <td>{{ consoEnergieFinaleParM2 !== undefined ? (consoEnergieFinaleParM2 | number:'1.0-2') : '-' }}</td>
+            <td>kWh/m²</td>
+          </tr>
+          <tr>
+            <td>Intensité carbone de l'énergie par m²</td>
+            <td>{{ intensiteCarboneParM2 !== undefined ? (intensiteCarboneParM2 | number:'1.0-2') : '-' }}</td>
+            <td>kgCO₂e/m²</td>
+          </tr>
+        </tbody>
+      </table>
     </main>
   </div>
 </body>

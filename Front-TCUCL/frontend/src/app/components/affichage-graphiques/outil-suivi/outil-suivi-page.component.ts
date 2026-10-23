@@ -47,6 +47,13 @@ export class OutilSuiviPageComponent implements OnInit {
   scopesTotal: number = 0;
   currentYear: number = new Date().getFullYear();
   consoEnergieFinale?: number;
+  surfaceTotaleBatiments?: number;
+  consoEnergieFinaleParM2?: number;
+  intensiteCarboneParM2?: number;
+  bilanCarboneTotalParM2?: number;
+  bilanCarboneTotalParUsager?: number;
+  effectifTotal?: number;
+  indicateursParAn: Record<number, Record<string, number | null>> = {};
 
   syntheseYears: { label: string, value: number }[] = [];
   selectedSyntheseYear: number = 0;
@@ -727,6 +734,12 @@ export class OutilSuiviPageComponent implements OnInit {
           if (res.consoEnergieFinale != null) {
             this.consoEnergieFinale = res.consoEnergieFinale;
           }
+          this.surfaceTotaleBatiments = res.surfaceTotaleBatiments != null ? Number(res.surfaceTotaleBatiments) : undefined;
+          this.consoEnergieFinaleParM2 = res.consoEnergieFinaleParM2 != null ? Number(res.consoEnergieFinaleParM2) : undefined;
+          this.intensiteCarboneParM2 = res.intensiteCarboneParM2 != null ? Number(res.intensiteCarboneParM2) : undefined;
+          this.bilanCarboneTotalParM2 = res.bilanCarboneTotalParM2 != null ? Number(res.bilanCarboneTotalParM2) : undefined;
+          this.bilanCarboneTotalParUsager = res.bilanCarboneTotalParUsager != null ? Number(res.bilanCarboneTotalParUsager) : undefined;
+          this.effectifTotal = res.effectifTotal != null ? Number(res.effectifTotal) : undefined;
         },
         error: err => console.error('Erreur récupération synthèse', err)
       });
@@ -743,6 +756,7 @@ export class OutilSuiviPageComponent implements OnInit {
       this.postesObjectifParAn = {} as any;
       this.postesRealiseParAn = {} as any;
       this.globalTotals = [];
+      this.indicateursParAn = {};
       this.selectedYearForPostes = null;
       this.compareYears = [];
       this.cdr.detectChanges();
@@ -768,7 +782,13 @@ export class OutilSuiviPageComponent implements OnInit {
     }
 
     this.globalTotals = (data.globalTotals ?? []) as any;
+    this.indicateursParAn = (data.indicateursParAn ?? {}) as any;
     this.cdr.detectChanges();
+  }
+
+  getIndicateurVal(year: number, key: string): number | null {
+    const val = this.indicateursParAn?.[year]?.[key];
+    return (val !== undefined && val !== null && isFinite(val) && val > 0) ? Number(val) : null;
   }
 
   onToggleMock(useMock: boolean) {
