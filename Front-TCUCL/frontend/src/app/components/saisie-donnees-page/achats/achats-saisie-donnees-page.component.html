@@ -141,22 +141,52 @@
     </div>
     <div *ngIf="resultatAchats" class="right-panel">
       <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total des émissions Achats</span>
+        <span class="total-value">{{ totalGlobalAchats | number:'1.2-2' }} tCO₂e</span>
+      </div>
       <table class="data-table">
         <thead>
           <tr>
-            <th>Poste / Élément</th>
-            <th>Émissions GES (tCO₂e/an)</th>
+            <th>Poste</th>
+            <th>Émissions GES</th>
           </tr>
         </thead>
         <tbody>
-          <ng-container *ngFor="let entry of resultatAchatsEntries">
-            <tr *ngIf="isNumeric(entry.value)">
-              <td>{{ formatLabel(entry.key) }}</td>
-              <td class="readonly-cell">{{ entry.value | number:'1.3-3' }}</td>
-            </tr>
-          </ng-container>
+          <tr>
+            <td>Sous-total consommables</td>
+            <td class="readonly-cell">{{ (resultatAchats.totalPosteAchat || 0) | number:'1.2-2' }} tCO₂e</td>
+          </tr>
+          <tr>
+            <td>Sous-total textile</td>
+            <td class="readonly-cell">{{ (resultatAchats.totalPosteTextile || 0) | number:'1.2-2' }} tCO₂e</td>
+          </tr>
+          <tr>
+            <td>Sous-total restauration</td>
+            <td class="readonly-cell">{{ (resultatAchats.totalPosteRestauration || 0) | number:'1.2-2' }} tCO₂e</td>
+          </tr>
         </tbody>
       </table>
+
+      <details *ngIf="resultatAchatsEntries.length > 0" style="margin-top: 15px;">
+        <summary style="cursor: pointer; padding: 6px 0; color: #1e3a8a; font-weight: 600;">
+          Voir le détail des postes actifs ({{ resultatAchatsEntries.length }})
+        </summary>
+        <table class="data-table" style="margin-top: 8px;">
+          <thead>
+            <tr>
+              <th>Élément</th>
+              <th>Émissions GES</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let entry of resultatAchatsEntries">
+              <td>{{ formatLabel(entry.key) }}</td>
+              <td class="readonly-cell">{{ entry.value | number:'1.3-3' }} tCO₂e</td>
+            </tr>
+          </tbody>
+        </table>
+      </details>
     </div>
   </div>
   <app-save-footer [path]="ONGLET_KEYS.Achats" (estTermineChange)="onEstTermineChange($event)"></app-save-footer>

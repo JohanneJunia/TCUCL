@@ -239,25 +239,29 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
   <hr/>
   <div class="bottom-panel">
     <h2>Résultats des émissions GES</h2>
+    <div class="total-highlight">
+      <span class="total-label">Total des émissions Bâtiments</span>
+      <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
+    </div>
     <table class="data-table">
       <thead>
       <tr>
         <th>Poste</th>
-        <th>Total (Tonnes CO2e)</th>
+        <th>Émissions GES</th>
       </tr>
       </thead>
       <tbody>
       <tr>
         <td>Bâtiment (existant ou neuf construit)</td>
-        <td>{{ totalPosteBatiment }}</td>
+        <td>{{ (totalPosteBatiment || 0) | number:'1.2-2' }} tCO₂e</td>
       </tr>
       <tr>
         <td>Entretien courant</td>
-        <td>{{ totalPosteEntretien }}</td>
+        <td>{{ (totalPosteEntretien || 0) | number:'1.2-2' }} tCO₂e</td>
       </tr>
       <tr>
         <td>Mobilier électroménager</td>
-        <td>{{ totalPosteMobilier }}</td>
+        <td>{{ (totalPosteMobilier || 0) | number:'1.2-2' }} tCO₂e</td>
       </tr>
       </tbody>
     </table>

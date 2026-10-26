@@ -10,7 +10,7 @@ export enum MODE_TRANSPORT_DOM_TRAV {
     METRO_TRAM = 'Métro/Tram',
     MOTO = 'Moto',
     TRAIN_REGIONAL = 'Train régional',
-    TROTTINETTE = 'Trottinette',
+    TROTTINETTE = 'Trottinette électrique',
     VELO_ELECTRIQUE = 'Vélo électrique',
     VELO_MECANIQUE = 'Vélo mécanique',
     VOITURE_ELECTRIQUE = 'Voiture électrique',

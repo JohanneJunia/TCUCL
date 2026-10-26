@@ -28,6 +28,7 @@
     items: any = {};
     estTermine = false;
     ONGLET_KEYS = ONGLET_KEYS;
+    totalGlobalAchats: number = 0;
     resultatAchats: ResultatAchatDTO | null = null;
     resultatAchatsEntries: { key: string, value: any }[] = [];
 
@@ -97,62 +98,62 @@
 
     labelMapping: { [key: string]: string } = {
       papier_T: 'Papier (tonnes)',
-      papier_nb: 'Papier (nombre)',
+      papier_nb: 'Papier (ramettes)',
       livres_T: 'Livres (tonnes)',
-      livres_nb: 'Livres (nombre)',
-      cartonNeuf_T: 'Carton neuf (tonnes)',
-      cartonRecycle_T: 'Carton recyclé (tonnes)',
-      petitesFournitures_Eur: 'Petites fournitures (€)',
-      nbFeuillesImprimeesJetEncre_Nb: 'Feuilles jet d’encre (nb)',
-      nbFeuillesImprimeesToner_Nb: 'Feuilles toner (nb)',
-      produitsPharmaceutiques_Eur: 'Produits pharmaceutiques (€)',
-      services_imprimerie_publicite_architecture_ingenierie_maintenance_multi_technique_des_batiments: 'Services divers bâtiments (€)',
-      service_Enseignement: 'Services enseignement (€)',
-      service_Produits_informatiques_electroniques_et_optiques: 'Services informatiques/électroniques (€)',
-      service_Reparation_et_installation_de_machines_et_d_equipements: 'Services réparation/installations (€)',
-      service_Transport_terrestre: 'Transport terrestre (€)',
-      service_hebergement_et_restauration: 'Hébergement/restauration (€)',
-      service_de_telecommunications: 'Télécommunications (€)',
-      totalPosteAchat: 'Total poste achat (€)',
-      totalPosteTextile: 'Total poste textile (€)',
+      livres_nb: 'Livres (exemplaires)',
+      cartonNeuf_T: 'Carton neuf',
+      cartonRecycle_T: 'Carton recyclé',
+      petitesFournitures_Eur: 'Petites fournitures',
+      nbFeuillesImprimeesJetEncre_Nb: 'Impressions jet d’encre',
+      nbFeuillesImprimeesToner_Nb: 'Impressions toner',
+      produitsPharmaceutiques_Eur: 'Produits pharmaceutiques',
+      services_imprimerie_publicite_architecture_ingenierie_maintenance_multi_technique_des_batiments: 'Services divers bâtiments',
+      service_Enseignement: 'Services enseignement',
+      service_Produits_informatiques_electroniques_et_optiques: 'Services informatiques / électroniques',
+      service_Reparation_et_installation_de_machines_et_d_equipements: 'Services réparation / installations',
+      service_Transport_terrestre: 'Transport terrestre',
+      service_hebergement_et_restauration: 'Hébergement / restauration',
+      service_de_telecommunications: 'Télécommunications',
+      totalPosteAchat: 'Sous-total consommables',
+      totalPosteTextile: 'Sous-total textile',
       methodeRapideNombrePersonnesServiesRegimeClassique: 'Personnes servies - régime classique',
       methodeRapideNombrePersonnesServiesRegimeFlexitarien: 'Personnes servies - régime flexitarien',
-      nombreRepasServisDominanteAnimaleBoeuf: 'Repas animale - boeuf',
-      nombreRepasServisDominanteAnimalePoulet: 'Repas animale - poulet',
-      nombreRepasServisDominanteVegetaleBoeuf: 'Repas végétale - boeuf',
-      nombreRepasServisDominanteVegetalePoulet: 'Repas végétale - poulet',
-      nombreRepasServisDominanteClassiqueBoeuf: 'Repas classique - boeuf',
+      nombreRepasServisDominanteAnimaleBoeuf: 'Repas dominante animale - bœuf',
+      nombreRepasServisDominanteAnimalePoulet: 'Repas dominante animale - poulet',
+      nombreRepasServisDominanteVegetaleBoeuf: 'Repas dominante végétale - bœuf',
+      nombreRepasServisDominanteVegetalePoulet: 'Repas dominante végétale - poulet',
+      nombreRepasServisDominanteClassiqueBoeuf: 'Repas classique - bœuf',
       nombreRepasServisDominanteClassiquePoulet: 'Repas classique - poulet',
       nombreRepasServisRepasMoyen: 'Repas moyen',
       nombreRepasServisRepasVegetarien: 'Repas végétarien',
-      boeufAgneauMouton_Tonnes: 'Boeuf/agneau/mouton (t)',
-      poulet_Tonnes: 'Poulet (t)',
-      cafe_Tonnes: 'Café (t)',
-      chocolat_Tonnes: 'Chocolat (t)',
-      beurre_Tonnes: 'Beurre (t)',
-      viandesMoyenne_Tonnes: 'Viandes moyennes (t)',
-      produitsSucresMoyenne_Tonnes: 'Produits sucrés (t)',
-      poissonsMoyenne_Tonnes: 'Poissons (t)',
-      fromagesMoyenne_Tonnes: 'Fromages (t)',
-      oleagineuxMoyenne_Tonnes: 'Oléagineux (t)',
-      matieresGrassesMoyenne_Tonnes: 'Matières grasses (t)',
-      boissonsMoyenne_Tonnes: 'Boissons (t)',
-      oeufs_Tonnes: 'Œufs (t)',
-      cerealesMoyenne_Tonnes: 'Céréales (t)',
-      legumesMoyenne_Tonnes: 'Légumes (t)',
-      fruitsMoyenne_Tonnes: 'Fruits (t)',
-      legumineuseMoyenne_Tonnes: 'Légumineuses (t)',
-      totalPosteRestauration: 'Total poste restauration (€)',
-      jean_nb: 'Jean (nb)',
-      pull_Acrylique_nb: 'Pull acrylique (nb)',
-      t_shirt_polyester_nb: 'T-shirt polyester (nb)',
-      chemise_nb: 'Chemise (nb)',
-      polaire_nb: 'Polaire (nb)',
-      sweat_nb: 'Sweat (nb)',
-      veste_Anorak_nb: 'Veste/Anorak (nb)',
-      manteau_nb: 'Manteau (nb)',
-      chaussure_nb: 'Chaussure (nb)',
-      pull_Coton_nb: 'Pull coton (nb)'
+      boeufAgneauMouton_Tonnes: 'Bœuf / agneau / mouton',
+      poulet_Tonnes: 'Poulet',
+      cafe_Tonnes: 'Café',
+      chocolat_Tonnes: 'Chocolat',
+      beurre_Tonnes: 'Beurre',
+      viandesMoyenne_Tonnes: 'Viandes moyennes',
+      produitsSucresMoyenne_Tonnes: 'Produits sucrés',
+      poissonsMoyenne_Tonnes: 'Poissons',
+      fromagesMoyenne_Tonnes: 'Fromages',
+      oleagineuxMoyenne_Tonnes: 'Oléagineux',
+      matieresGrassesMoyenne_Tonnes: 'Matières grasses',
+      boissonsMoyenne_Tonnes: 'Boissons',
+      oeufs_Tonnes: 'Œufs',
+      cerealesMoyenne_Tonnes: 'Céréales',
+      legumesMoyenne_Tonnes: 'Légumes',
+      fruitsMoyenne_Tonnes: 'Fruits',
+      legumineuseMoyenne_Tonnes: 'Légumineuses',
+      totalPosteRestauration: 'Sous-total restauration',
+      jean_nb: 'Jean',
+      pull_Acrylique_nb: 'Pull acrylique',
+      t_shirt_polyester_nb: 'T-shirt polyester',
+      chemise_nb: 'Chemise',
+      polaire_nb: 'Polaire',
+      sweat_nb: 'Sweat',
+      veste_Anorak_nb: 'Veste / Anorak',
+      manteau_nb: 'Manteau',
+      chaussure_nb: 'Chaussure',
+      pull_Coton_nb: 'Pull coton'
     };
 
     onEstTermineChange(value: boolean): void {
@@ -228,7 +229,10 @@
         .subscribe({
           next: (resultat) => {
             this.resultatAchats = resultat;
-            this.resultatAchatsEntries = Object.entries(resultat).map(([key, value]) => ({ key, value }));
+            this.totalGlobalAchats = (resultat.totalPosteAchat || 0) + (resultat.totalPosteTextile || 0) + (resultat.totalPosteRestauration || 0);
+            this.resultatAchatsEntries = Object.entries(resultat)
+              .filter(([key, value]) => !['totalPosteAchat', 'totalPosteTextile', 'totalPosteRestauration'].includes(key) && typeof value === 'number' && !isNaN(value) && value > 0)
+              .map(([key, value]) => ({ key, value }));
           },
           error: (err) => {
             console.error('Erreur lors de la récupération des résultats Achats :', err);

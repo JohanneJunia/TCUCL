@@ -34,6 +34,10 @@ export class BatimentsSaisieDonneesPageComponent implements OnInit {
   totalPosteBatiment!: number;
   totalPosteEntretien!: number;
   totalPosteMobilier!: number;
+
+  get totalEmissions(): number {
+    return (this.totalPosteBatiment || 0) + (this.totalPosteEntretien || 0) + (this.totalPosteMobilier || 0);
+  }
   ONGLET_KEYS = ONGLET_KEYS;
   batimentTypes = Object.values(EnumBatiment_TypeBatiment);
   structureTypes = Object.values(EnumBatiment_TypeStructure);

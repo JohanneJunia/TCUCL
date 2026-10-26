@@ -73,11 +73,15 @@ export interface AchatOnglet {
 }
 
 export interface ResultatAchatDTO {
-  emissionPosteConsommable: Record<string, number>;
-  emissionPosteTextile: Record<string, number>;
-  emissionPosteRestauration: Record<string, number>;
-  totalConsommable: number;
-  totalTextile: number;
-  totalRestauration: number;
-  totalAchats: number;
+  totalPosteAchat?: number;
+  totalPosteTextile?: number;
+  totalPosteRestauration?: number;
+  totalConsommable?: number;
+  totalTextile?: number;
+  totalRestauration?: number;
+  totalAchats?: number;
+  emissionPosteConsommable?: Record<string, number>;
+  emissionPosteTextile?: Record<string, number>;
+  emissionPosteRestauration?: Record<string, number>;
+  [key: string]: any;
 }

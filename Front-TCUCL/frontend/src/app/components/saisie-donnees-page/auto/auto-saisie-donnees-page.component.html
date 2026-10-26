@@ -94,6 +94,10 @@
 
   <div class="right-panel">
     <h2>Résultats des émissions GES</h2>
+    <div class="total-highlight">
+      <span class="total-label">Total des émissions Véhicules</span>
+      <span class="total-value">{{ (vehiculeResultat?.totalEmissionGES || 0) | number:'1.2-2' }} tCO₂e</span>
+    </div>
     <table class="data-table">
       <tbody>
         <tr>
@@ -107,10 +111,6 @@
         <tr>
           <td>Émission électrique</td>
           <td>{{ (vehiculeResultat?.totalEmissionGESElectrique || 0) | number:'1.2-2' }} tCO₂e</td>
-        </tr>
-        <tr>
-          <td><strong>Émission totale</strong></td>
-          <td><strong>{{ (vehiculeResultat?.totalEmissionGES || 0) | number:'1.2-2' }} tCO₂e</strong></td>
         </tr>
       </tbody>
     </table>

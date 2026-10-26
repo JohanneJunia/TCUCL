@@ -74,6 +74,12 @@ export class AutreImmobilisationPageComponent implements OnInit {
   ONGLET_KEYS = ONGLET_KEYS;
   resultats: any = null;
 
+  get totalEmissions(): number {
+    const bat = Number(this.resultats?.totalPosteBatiment) || 0;
+    const pv = Number(this.resultats?.totalPostePhotovoltaique) || 0;
+    return bat + pv;
+  }
+
   onEstTermineChange(value: boolean): void {
     this.estTermine = value;
     this.updateData();

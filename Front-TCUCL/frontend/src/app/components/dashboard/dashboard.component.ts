@@ -200,10 +200,13 @@ export class DashboardComponent implements OnInit {
           'Déchets': res.dechetGlobal
         };
 
-        this.sectors = Object.entries(mapping).map(([label, value]) => ({
-          label,
-          value: Number(value ?? 0)
-        }));
+        this.sectors = Object.entries(mapping).map(([label, value]) => {
+          const num = Number(value);
+          return {
+            label,
+            value: isNaN(num) ? 0 : num
+            };
+        });
         this.total = this.sectors.reduce((sum, s) => sum + s.value, 0);
       },
       error: err => console.error('Erreur fetchSectors:', err)

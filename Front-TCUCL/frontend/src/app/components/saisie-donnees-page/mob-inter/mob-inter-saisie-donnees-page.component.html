@@ -99,6 +99,10 @@
   </div>
   <div class="bottom-panel">
     <h2>Résultats des émissions GES</h2>
+    <div class="total-highlight">
+      <span class="total-label">Total mobilité internationale</span>
+      <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
+    </div>
   <table class="data-table">
     <thead>
     <tr>
@@ -110,22 +114,22 @@
     </thead>
     <tbody>
     <tr>
-      <td>Émissions GES Europe train (TCO2e avec trainées de condensation)</td>
-      <td>{{ resultats?.emissionGesProEuropeTrain }}</td>
-      <td>{{ resultats?.emissionGesStagesEuropeTrain }}</td>
-      <td>{{ resultats?.emissionGesSemestresEtudiantsEuropeTrain }}</td>
+      <td>Émissions GES Europe train (tCO₂e avec traînées)</td>
+      <td>{{ (resultats?.emissionGesProEuropeTrain || 0) | number:'1.2-2' }}</td>
+      <td>{{ (resultats?.emissionGesStagesEuropeTrain || 0) | number:'1.2-2' }}</td>
+      <td>{{ (resultats?.emissionGesSemestresEtudiantsEuropeTrain || 0) | number:'1.2-2' }}</td>
     </tr>
     <tr>
-      <td>Émissions GES Europe avion (TCO2e avec trainées de condensation)</td>
-      <td>{{ resultats?.emissionGesProEuropeAvion }}</td>
-      <td>{{ resultats?.emissionGesStagesEuropeAvion }}</td>
-      <td>{{ resultats?.emissionGesSemestresEtudiantsEuropeAvion }}</td>
+      <td>Émissions GES Europe avion (tCO₂e avec traînées)</td>
+      <td>{{ (resultats?.emissionGesProEuropeAvion || 0) | number:'1.2-2' }}</td>
+      <td>{{ (resultats?.emissionGesStagesEuropeAvion || 0) | number:'1.2-2' }}</td>
+      <td>{{ (resultats?.emissionGesSemestresEtudiantsEuropeAvion || 0) | number:'1.2-2' }}</td>
     </tr>
     <tr>
-      <td>Émissions GES hors Europe (TCO2e avec trainées de condensation)</td>
-      <td>{{ resultats?.emissionGesProHorsEurope }}</td>
-      <td>{{ resultats?.emissionGesStagesHorsEurope }}</td>
-      <td>{{ resultats?.emissionGesSemestresEtudiantsHorsEurope }}</td>
+      <td>Émissions GES hors Europe (tCO₂e avec traînées)</td>
+      <td>{{ (resultats?.emissionGesProHorsEurope || 0) | number:'1.2-2' }}</td>
+      <td>{{ (resultats?.emissionGesStagesHorsEurope || 0) | number:'1.2-2' }}</td>
+      <td>{{ (resultats?.emissionGesSemestresEtudiantsHorsEurope || 0) | number:'1.2-2' }}</td>
     </tr>
     <tr>
       <td>Proportion de départs</td>

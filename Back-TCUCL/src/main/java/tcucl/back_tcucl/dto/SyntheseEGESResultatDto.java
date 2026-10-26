@@ -40,6 +40,11 @@ public class SyntheseEGESResultatDto {
     private Float deplacementDomicileTravail;
     private Float bilanCarboneTotalScope;
     private Integer effectifTotal;
+    private Float surfaceTotaleBatiments;
+    private Float consoEnergieFinaleParM2;
+    private Float consoEnergiePrimaireParM2;
+    private Float intensiteCarboneParM2;
+    private Float bilanCarboneTotalParM2;
 
     public SyntheseEGESResultatDto() {
     }
@@ -330,5 +335,45 @@ public class SyntheseEGESResultatDto {
 
     public void setEffectifTotal(Integer effectifTotal) {
         this.effectifTotal = effectifTotal;
+    }
+
+    public Float getSurfaceTotaleBatiments() {
+        return surfaceTotaleBatiments;
+    }
+
+    public void setSurfaceTotaleBatiments(Float surfaceTotaleBatiments) {
+        this.surfaceTotaleBatiments = surfaceTotaleBatiments;
+    }
+
+    public Float getConsoEnergieFinaleParM2() {
+        return consoEnergieFinaleParM2;
+    }
+
+    public void setConsoEnergieFinaleParM2(Float consoEnergieFinaleParM2) {
+        this.consoEnergieFinaleParM2 = consoEnergieFinaleParM2;
+    }
+
+    public Float getConsoEnergiePrimaireParM2() {
+        return consoEnergiePrimaireParM2;
+    }
+
+    public void setConsoEnergiePrimaireParM2(Float consoEnergiePrimaireParM2) {
+        this.consoEnergiePrimaireParM2 = consoEnergiePrimaireParM2;
+    }
+
+    public Float getIntensiteCarboneParM2() {
+        return intensiteCarboneParM2;
+    }
+
+    public void setIntensiteCarboneParM2(Float intensiteCarboneParM2) {
+        this.intensiteCarboneParM2 = intensiteCarboneParM2;
+    }
+
+    public Float getBilanCarboneTotalParM2() {
+        return bilanCarboneTotalParM2;
+    }
+
+    public void setBilanCarboneTotalParM2(Float bilanCarboneTotalParM2) {
+        this.bilanCarboneTotalParM2 = bilanCarboneTotalParM2;
     }
 }

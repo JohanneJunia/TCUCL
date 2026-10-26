@@ -108,7 +108,31 @@ public class OutilSuiviServiceImpl implements OutilSuiviService {
             }
             realise.add(reaVal);
             postesRealiseParAn.put(year, extractPosteParUsagerList(synth));
-            indicateursParAn.put(year, new LinkedHashMap<>()); // TODO: indicateurs détaillés à relier aux onglets
+            Map<String, Float> yearIndicators = new LinkedHashMap<>();
+            if (synth != null) {
+                if (synth.getSurfaceTotaleBatiments() != null) {
+                    yearIndicators.put("surfaceTotaleBatiments", synth.getSurfaceTotaleBatiments());
+                }
+                if (synth.getConsoEnergieFinaleParM2() != null) {
+                    yearIndicators.put("consoEnergieFinaleParM2", synth.getConsoEnergieFinaleParM2());
+                }
+                if (synth.getConsoEnergiePrimaireParM2() != null) {
+                    yearIndicators.put("consoEnergiePrimaireParM2", synth.getConsoEnergiePrimaireParM2());
+                }
+                if (synth.getIntensiteCarboneParM2() != null) {
+                    yearIndicators.put("intensiteCarboneParM2", synth.getIntensiteCarboneParM2());
+                }
+                if (synth.getBilanCarboneTotalParM2() != null) {
+                    yearIndicators.put("bilanCarboneTotalParM2", synth.getBilanCarboneTotalParM2());
+                }
+                if (synth.getEffectifTotal() != null) {
+                    yearIndicators.put("effectifTotal", synth.getEffectifTotal().floatValue());
+                }
+                if (synth.getBilanCarboneTotalParUsager() != null) {
+                    yearIndicators.put("bilanCarboneTotalParUsager", synth.getBilanCarboneTotalParUsager());
+                }
+            }
+            indicateursParAn.put(year, yearIndicators);
             Float gTotal = synth != null ? synth.getBilanCarboneTotalGlobal() : null;
             if (gTotal != null && !Float.isFinite(gTotal)) {
                 gTotal = null;
@@ -252,7 +276,14 @@ public class OutilSuiviServiceImpl implements OutilSuiviService {
 
             postesObjectifParAn.put(y, toList(obj));
             postesRealiseParAn.put(y, toList(rea));
-            indicateursParAn.put(y, Collections.emptyMap());
+            Map<String, Float> mockInd = new LinkedHashMap<>();
+            mockInd.put("surfaceTotaleBatiments", 25000f);
+            mockInd.put("consoEnergieFinaleParM2", 145f);
+            mockInd.put("consoEnergiePrimaireParM2", 210f);
+            mockInd.put("intensiteCarboneParM2", 28f);
+            mockInd.put("bilanCarboneTotalParM2", 48f);
+            mockInd.put("effectifTotal", 3200f);
+            indicateursParAn.put(y, mockInd);
         }
 
         List<Float> globalTotals = Arrays.asList(12.2f, 11.8f, 13f, 10.5f, 10.0f, 14f, 8.9f, 8.3f, 7.8f, 7.3f, 6.8f, 6.2f);
