@@ -10,14 +10,6 @@ h2 {
   color: #2c3e50;
 }
 
-.data-entry-container {
-  width: 100%;
-  display: flex;
-  justify-content: flex-start;
-  margin-top: 1.5em;
-  padding-left: 10em;
-}
-
 .data-table {
   background-color: white;
   width: 100%;
@@ -41,16 +33,6 @@ td {
   white-space: nowrap;
 }
 
-.consumption-button {
-  width: 100%;
-  background-color: #d1d1d1;
-  border: none;
-  padding: 0.5em;
-  border-radius: 8px;
-  font-size: 1em;
-  font-weight: bold;
-}
-
 .value-input {
   width: 80%;
   padding: 0.4em;
@@ -58,6 +40,19 @@ td {
   font-size: 1em;
   border: 1px solid #ccc;
   border-radius: 5px;
+}
+
+/* Ticket 26 : saisie invalide signalée sous le champ */
+.value-input.invalide {
+  border-color: #c0392b;
+  background-color: #fdecea;
+}
+
+.erreur-champ {
+  margin-top: 0.25em;
+  color: #922b21;
+  font-size: 0.8em;
+  white-space: normal;
 }
 
 .unit-select {
@@ -94,13 +89,6 @@ td {
   box-sizing: border-box;
 }
 
-.right-panel h3 {
-  font-size: 1.4rem;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
 .right-panel .data-table {
   width: 100%;
   border-collapse: collapse;
@@ -110,11 +98,5 @@ td {
   padding: 0.7em;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
-  background-color: #f3f3f3; // fond grisé uniforme
-}
-
-h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
-  color: #2c3e50;
+  background-color: #f3f3f3;
 }
