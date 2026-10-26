@@ -44,6 +44,18 @@ export class DechetSaisieDonneesPageComponent implements OnInit {
     [TYPE_DECHET.TEXTILE]: [TRAITEMENT_DECHET.RECYCLAGE],
   };
 
+  typeLabels: Record<string, string> = {
+    [TYPE_DECHET.ORDURES_MENAGERES]: 'Ordures ménagères',
+    [TYPE_DECHET.CARTONS]: 'Cartons',
+    [TYPE_DECHET.VERRE]: 'Verre',
+    [TYPE_DECHET.METAUX]: 'Métaux',
+    [TYPE_DECHET.TEXTILE]: 'Textile',
+  };
+
+  getTypeLabel(type: string): string {
+    return this.typeLabels[type] || type;
+  }
+
   ngOnInit(): void {
     this.estTermine = this.statusService.getStatus(ONGLET_KEYS.Dechets);
     this.statusService.statuses$.subscribe((s: Record<string, boolean>) => {

@@ -43,6 +43,13 @@ export interface SyntheseEgesResult {
   deplacementDomicileTravail?: number | null;
   autreEmissionIndirecte?: number | null;
   consoEnergieFinale?: number | null;
+  surfaceTotaleBatiments?: number | null;
+  consoEnergieFinaleParM2?: number | null;
+  consoEnergiePrimaireParM2?: number | null;
+  intensiteCarboneParM2?: number | null;
+  bilanCarboneTotalParM2?: number | null;
+  bilanCarboneTotalParUsager?: number | null;
+  effectifTotal?: number | null;
   /** Any other numeric fields returned by the API */
   [key: string]: number | null | undefined;
 }

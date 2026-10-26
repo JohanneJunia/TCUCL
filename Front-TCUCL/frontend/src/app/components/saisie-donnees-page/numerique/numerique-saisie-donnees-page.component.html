@@ -10,10 +10,14 @@
       </span>
   </div>
   <p class="question-title">Disposez-vous de données sur le cloud ?</p>
-  <label><input type="radio" name="hasCloud" [(ngModel)]="donneesCloudDisponibles" [value]="true"
-                (change)="updateData()"/> Oui</label>
-  <label><input type="radio" name="hasCloud" [(ngModel)]="donneesCloudDisponibles" [value]="false"
-                (change)="updateData()"/> Non</label>
+  <label>
+    <input type="radio" name="hasCloud" [checked]="donneesCloudDisponibles === true"
+           (change)="onCloudOptionChange(true)"/> Oui
+  </label>
+  <label>
+    <input type="radio" name="hasCloud" [checked]="donneesCloudDisponibles === false"
+           (change)="onCloudOptionChange(false)"/> Non
+  </label>
 
     <div class="card" *ngIf="donneesCloudDisponibles">
       <label for="cloudTraffic">Trafic cloud (Go)</label>
@@ -88,6 +92,10 @@
   </div>
   <div *ngIf="resultats" class="bottom-panel">
     <h2>Résultats des émissions GES</h2>
+    <div class="total-highlight">
+      <span class="total-label">Total des émissions Numérique</span>
+      <span class="total-value">{{ (resultats.totalNumerique || 0) | number:'1.2-2' }} tCO₂e</span>
+    </div>
     <table class="data-table">
       <tbody>
       <tr>
@@ -101,10 +109,6 @@
       <tr>
         <td>{{ donneesCloudDisponibles ? 'Empreinte carbone data center + réseaux' : 'Estimation forfaitaire data center + réseaux (méthode simplifiée)' }}</td>
         <td>{{ (resultats.empreinteCarboneDataCenterEtReseaux || 0) | number:'1.2-2' }} tCO₂e</td>
-      </tr>
-      <tr>
-        <td><strong>Total numérique</strong></td>
-        <td><strong>{{ (resultats.totalNumerique || 0) | number:'1.2-2' }} tCO₂e</strong></td>
       </tr>
       </tbody>
     </table>
