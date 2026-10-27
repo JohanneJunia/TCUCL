@@ -88,6 +88,7 @@
     border-top: 1px solid #ddd;
   }
 }
+
 .bottom-panel {
   flex: 1;
   background-color: white;
@@ -97,14 +98,14 @@
   box-sizing: border-box;
   min-width: 0;
   overflow-x: hidden;
-  margin-top: 2rem; // pour espacer du contenu précédent
+  margin-top: 2rem;
 }
 
 .bottom-panel td {
   padding: 0.7em;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
-  background-color: #f3f3f3; // fond grisé uniforme
+  background-color: #f3f3f3;
 }
 
 h2 {
@@ -112,4 +113,101 @@ h2 {
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   color: #34495e;
+}
+
+/* ===== Ticket 1 : champs obligatoires, messages, statut ===== */
+
+.requis {
+  color: #c0392b;
+  font-weight: 700;
+}
+
+.legende-requis {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 0 0.5rem;
+}
+
+.aide {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #666;
+  margin-top: 0.25rem;
+}
+
+.erreurs-formulaire {
+  margin: 1rem 0 0;
+  padding: 0.75rem 1rem 0.75rem 2rem;
+  background-color: #fdecea;
+  border-left: 4px solid #c0392b;
+  border-radius: 4px;
+  color: #922b21;
+  font-size: 0.9rem;
+}
+
+.alerte {
+  position: relative;
+  margin: 0 0 1.5rem;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.alerte-erreur {
+  background-color: #fdecea;
+  border-left: 4px solid #c0392b;
+  color: #922b21;
+}
+
+.alerte-info {
+  background-color: #fff6e0;
+  border-left: 4px solid #e67e22;
+  color: #7e5109;
+}
+
+.main-container .alerte-fermer {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.5rem;
+  margin: 0;
+  padding: 0 0.4rem;
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  line-height: 1;
+
+  &:hover {
+    background: transparent;
+    opacity: 0.7;
+  }
+}
+
+.statut {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.statut-compte {
+  background-color: #e3f5e8;
+  color: #1e7e34;
+}
+
+.statut-exclu-age {
+  background-color: #eceff1;
+  color: #546e7a;
+}
+
+.statut-incomplet {
+  background-color: #fff3cd;
+  color: #8a6d3b;
+  cursor: help;
+}
+
+.main-container .data-table tr.ligne-exclue td {
+  color: #777;
 }
