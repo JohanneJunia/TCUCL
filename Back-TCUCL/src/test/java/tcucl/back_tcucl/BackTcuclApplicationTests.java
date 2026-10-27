@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
  * À réactiver avec Testcontainers.
  */
 @SpringBootTest
-@Disabled("Nécessite une base PostgreSQL et les variables du .env (à migrer vers Testcontainers)")
 class BackTcuclApplicationTests {
 
 	@Test
