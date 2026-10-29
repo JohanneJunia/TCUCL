@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -35,13 +36,14 @@ public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final JwtFilter jwtFilter;
 
-    @Value("${app.cors.allowed-origin:${FRONT_ORIGIN:${API_BASE_URL:http://localhost:4200}}}")
+    @Value("${app.cors.allowed-origin:${FRONT_ORIGIN:http://localhost:4200}}")
     private String corsAllowedOrigin;
 
     public SecurityConfig(CustomUserDetailsServiceImpl customUserDetailsService, JwtUtils jwtUtils, JwtFilter jwtFilter) {
         this.customUserDetailsService = customUserDetailsService;
         this.jwtUtils = jwtUtils;
         this.jwtFilter = jwtFilter;
+        System.out.println(">>> SecurityConfig init");
     }
 
     @Bean
@@ -53,24 +55,35 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+        // CORS TOUJOURS ACTIVÉ
+        http.cors(Customizer.withDefaults());
+
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(
-                    REST_API + REST_AUTH + REST_CONNEXION,
-                    REST_API + REST_AUTH + REST_CHANGE_MDP_PREMIERE_CONNEXION,
-                    REST_API + REST_AUTH + REST_FORGOT_PASSWORD,
-                    REST_API + REST_AUTH + REST_RESET_PASSWORD,
-                    REST_API + "/test/**",
-                    REST_API + "/test",
-                    "/swagger-ui/**",
-                    "/v3/api-docs/**"
-                ).permitAll()
-                .anyRequest().authenticated()
+            .authorizeHttpRequests(auth ->
+                auth
+                    // OPTIONS = toujours autorisé (preflight CORS)
+                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                    // Endpoints publics
+                    .requestMatchers(
+                            REST_API + REST_AUTH + REST_CONNEXION,
+                            REST_API + REST_AUTH + REST_CHANGE_MDP_PREMIERE_CONNEXION,
+                            REST_API + REST_AUTH + REST_FORGOT_PASSWORD,
+                            REST_API + REST_AUTH + REST_RESET_PASSWORD,
+                            REST_API + "/test/**",
+                            REST_API + "/test",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**"
+                    ).permitAll()
+
+                    // Le reste sécurisé
+                    .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtFilter,
+                             UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -79,17 +92,31 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        configuration.setAllowedOriginPatterns(Arrays.asList(
-            "http://localhost:[*]",
-            "http://127.0.0.1:[*]"
-        ));
+        // Origines autorisées depuis la propriété (séparées par des virgules si besoin)
+        List<String> origins = Arrays.stream(corsAllowedOrigin.split(","))
+            .map(String::trim)
+            .map(s -> s.endsWith("/") ? s.substring(0, s.length() - 1) : s)
+            .filter(s -> !s.isEmpty())
+            .collect(Collectors.toList());
+
+        // Toujours garder localhost/127.0.0.1 accessible pour les tests et le dev
+        if (!origins.contains("http://localhost:4200")) {
+            origins.add("http://localhost:[*]");
+            origins.add("http://127.0.0.1:[*]");
+        }
+
+        // Utiliser setAllowedOriginPatterns (compatible avec allowCredentials et avec '*')
+        configuration.setAllowedOriginPatterns(origins);
+
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.addAllowedHeader("*");
         configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
+        System.out.println(">>> CORS config registered with origins: " + origins);
         return source;
     }
 }
