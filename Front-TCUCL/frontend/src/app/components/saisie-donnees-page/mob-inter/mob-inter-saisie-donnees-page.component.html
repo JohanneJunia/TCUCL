@@ -1,15 +1,16 @@
 <div class="main-container">
-  <div class="left-panel">
-    <div class="page-title">
-      <h2>Mobilité internationale</h2>
-      <span class="help-icon" title="Merci de renseigner les nombres de déplacements (1 déplacement = 1 aller simple) selon chaque destination à l'internationale pour chaque public cible. Certaines destinations européennes semblent accessibles en train/bus et il est donc possible d'indiquer si les déplacementts se font en train/bus ou avion pour ces dernières. Si le trajet s'est fait en co voiturage ou bus, alors mettre le nombre dans la colonne 'train', si le trajet s'est fait en voiture individuelle, alors mettre le nombre dans 'avion'.">
-        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="black"></circle>
-          <rect x="11" y="10" width="2" height="6" fill="white"></rect>
-          <circle cx="12" cy="8" r="1" fill="white"></circle>
-        </svg>
-      </span>
-    </div>
+  <div class="page-title">
+    <h2>Mobilité internationale</h2>
+    <span class="help-icon" title="Merci de renseigner les nombres de déplacements (1 déplacement = 1 aller simple) selon chaque destination à l'internationale pour chaque public cible. Certaines destinations européennes semblent accessibles en train/bus et il est donc possible d'indiquer si les déplacementts se font en train/bus ou avion pour ces dernières. Si le trajet s'est fait en co voiturage ou bus, alors mettre le nombre dans la colonne 'train', si le trajet s'est fait en voiture individuelle, alors mettre le nombre dans 'avion'.">
+      <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="black"></circle>
+        <rect x="11" y="10" width="2" height="6" fill="white"></rect>
+        <circle cx="12" cy="8" r="1" fill="white"></circle>
+      </svg>
+    </span>
+  </div>
+  <div class="panels-wrapper">
+    <div class="left-panel">
     <div class="import-buttons">
       <!-- Input fichier caché -->
       <p>Importer ou remplacer le fichier excel des mobilités internationales</p>
@@ -96,91 +97,92 @@
         </tbody>
       </table>
     </div>
-  </div>
-  <div class="bottom-panel">
-    <h2>Résultats des émissions GES</h2>
-    <div class="total-highlight">
-      <span class="total-label">Total mobilité internationale</span>
-      <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
     </div>
-  <table class="data-table">
-    <thead>
-    <tr>
-      <th>Indicateur</th>
-      <th>Pros</th>
-      <th>Stages</th>
-      <th>Semestres</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td>Émissions GES Europe train (tCO₂e avec traînées)</td>
-      <td>{{ (resultats?.emissionGesProEuropeTrain || 0) | number:'1.2-2' }}</td>
-      <td>{{ (resultats?.emissionGesStagesEuropeTrain || 0) | number:'1.2-2' }}</td>
-      <td>{{ (resultats?.emissionGesSemestresEtudiantsEuropeTrain || 0) | number:'1.2-2' }}</td>
-    </tr>
-    <tr>
-      <td>Émissions GES Europe avion (tCO₂e avec traînées)</td>
-      <td>{{ (resultats?.emissionGesProEuropeAvion || 0) | number:'1.2-2' }}</td>
-      <td>{{ (resultats?.emissionGesStagesEuropeAvion || 0) | number:'1.2-2' }}</td>
-      <td>{{ (resultats?.emissionGesSemestresEtudiantsEuropeAvion || 0) | number:'1.2-2' }}</td>
-    </tr>
-    <tr>
-      <td>Émissions GES hors Europe (tCO₂e avec traînées)</td>
-      <td>{{ (resultats?.emissionGesProHorsEurope || 0) | number:'1.2-2' }}</td>
-      <td>{{ (resultats?.emissionGesStagesHorsEurope || 0) | number:'1.2-2' }}</td>
-      <td>{{ (resultats?.emissionGesSemestresEtudiantsHorsEurope || 0) | number:'1.2-2' }}</td>
-    </tr>
-    <tr>
-      <td>Proportion de départs</td>
-      <td>{{ resultats?.prosProportionDeDeparts }}</td>
-      <td>{{ resultats?.stagesProportionDeDeparts }}</td>
-      <td>{{ resultats?.semestresProportionDeDeparts }}</td>
-    </tr>
-    <tr>
-      <td>Part Europe vs non Europe</td>
-      <td>{{ resultats?.prosPartEuropeVsNonEurope }}</td>
-      <td>{{ resultats?.stagesPartEuropeVsNonEurope }}</td>
-      <td>{{ resultats?.semestresPartEuropeVsNonEurope }}</td>
-    </tr>
-    <tr>
-      <td>Distance moyenne hors Europe (km)</td>
-      <td>{{ resultats?.prosDistanceMoyenneHorsEurope }}</td>
-      <td>{{ resultats?.stagesDistanceMoyenneHorsEurope }}</td>
-      <td>{{ resultats?.semestresDistanceMoyenneHorsEurope }}</td>
-    </tr>
-    <tr>
-      <td>Part train en Europe</td>
-      <td>{{ resultats?.prosPartTrainEnEurope }}</td>
-      <td>{{ resultats?.stagesPartTrainEnEurope }}</td>
-      <td>{{ resultats?.semestresPartTrainEnEurope }}</td>
-    </tr>
-    <tr>
-      <td>Distance moyenne Europe avion (km)</td>
-      <td>{{ resultats?.prosDistancemoyenneEuropeAvion }}</td>
-      <td>{{ resultats?.stagesDistancemoyenneEuropeAvion }}</td>
-      <td>{{ resultats?.semestresDistancemoyenneEuropeAvion }}</td>
-    </tr>
-    <tr>
-      <td>Distance moyenne Europe train (km)</td>
-      <td>{{ resultats?.prosDistanceMoyenneEuropeTrain }}</td>
-      <td>{{ resultats?.stagesDistanceMoyenneEuropeTrain }}</td>
-      <td>{{ resultats?.semestresDistanceMoyenneEuropeTrain }}</td>
-    </tr>
-    <tr>
-      <td>Intensité carbone (gCO2e/km)</td>
-      <td>{{ resultats?.prosIntensiteCarboneDesDeplacemeents_gCo2eParKm }}</td>
-      <td>{{ resultats?.stagesIntensiteCarboneDesDeplacemeents_gCo2eParKm }}</td>
-      <td>{{ resultats?.semestresIntensiteCarboneDesDeplacemeents_gCo2eParKm }}</td>
-    </tr>
-    <tr>
-      <td>Intensité carbone (kgCO2e/départ)</td>
-      <td>{{ resultats?.prosIntensiteCarboneDesDeplacemeents_kgCo2eParDepart }}</td>
-      <td>{{ resultats?.stagesIntensiteCarboneDesDeplacemeents_kgCo2eParDepart }}</td>
-      <td>{{ resultats?.semestresIntensiteCarboneDesDeplacemeents_kgCo2eParDepart }}</td>
-    </tr>
-    </tbody>
-  </table>
+    <div class="right-panel">
+      <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total mobilité internationale</span>
+        <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
+      </div>
+    <table class="data-table">
+      <thead>
+      <tr>
+        <th>Indicateur</th>
+        <th>Pros</th>
+        <th>Stages</th>
+        <th>Semestres</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td>Émissions GES Europe train (tCO₂e avec traînées)</td>
+        <td>{{ (resultats?.emissionGesProEuropeTrain || 0) | number:'1.2-2' }}</td>
+        <td>{{ (resultats?.emissionGesStagesEuropeTrain || 0) | number:'1.2-2' }}</td>
+        <td>{{ (resultats?.emissionGesSemestresEtudiantsEuropeTrain || 0) | number:'1.2-2' }}</td>
+      </tr>
+      <tr>
+        <td>Émissions GES Europe avion (tCO₂e avec traînées)</td>
+        <td>{{ (resultats?.emissionGesProEuropeAvion || 0) | number:'1.2-2' }}</td>
+        <td>{{ (resultats?.emissionGesStagesEuropeAvion || 0) | number:'1.2-2' }}</td>
+        <td>{{ (resultats?.emissionGesSemestresEtudiantsEuropeAvion || 0) | number:'1.2-2' }}</td>
+      </tr>
+      <tr>
+        <td>Émissions GES hors Europe (tCO₂e avec traînées)</td>
+        <td>{{ (resultats?.emissionGesProHorsEurope || 0) | number:'1.2-2' }}</td>
+        <td>{{ (resultats?.emissionGesStagesHorsEurope || 0) | number:'1.2-2' }}</td>
+        <td>{{ (resultats?.emissionGesSemestresEtudiantsHorsEurope || 0) | number:'1.2-2' }}</td>
+      </tr>
+      <tr>
+        <td>Proportion de départs</td>
+        <td>{{ resultats?.prosProportionDeDeparts }}</td>
+        <td>{{ resultats?.stagesProportionDeDeparts }}</td>
+        <td>{{ resultats?.semestresProportionDeDeparts }}</td>
+      </tr>
+      <tr>
+        <td>Part Europe vs non Europe</td>
+        <td>{{ resultats?.prosPartEuropeVsNonEurope }}</td>
+        <td>{{ resultats?.stagesPartEuropeVsNonEurope }}</td>
+        <td>{{ resultats?.semestresPartEuropeVsNonEurope }}</td>
+      </tr>
+      <tr>
+        <td>Distance moyenne hors Europe (km)</td>
+        <td>{{ resultats?.prosDistanceMoyenneHorsEurope }}</td>
+        <td>{{ resultats?.stagesDistanceMoyenneHorsEurope }}</td>
+        <td>{{ resultats?.semestresDistanceMoyenneHorsEurope }}</td>
+      </tr>
+      <tr>
+        <td>Part train en Europe</td>
+        <td>{{ resultats?.prosPartTrainEnEurope }}</td>
+        <td>{{ resultats?.stagesPartTrainEnEurope }}</td>
+        <td>{{ resultats?.semestresPartTrainEnEurope }}</td>
+      </tr>
+      <tr>
+        <td>Distance moyenne Europe avion (km)</td>
+        <td>{{ resultats?.prosDistancemoyenneEuropeAvion }}</td>
+        <td>{{ resultats?.stagesDistancemoyenneEuropeAvion }}</td>
+        <td>{{ resultats?.semestresDistancemoyenneEuropeAvion }}</td>
+      </tr>
+      <tr>
+        <td>Distance moyenne Europe train (km)</td>
+        <td>{{ resultats?.prosDistanceMoyenneEuropeTrain }}</td>
+        <td>{{ resultats?.stagesDistanceMoyenneEuropeTrain }}</td>
+        <td>{{ resultats?.semestresDistanceMoyenneEuropeTrain }}</td>
+      </tr>
+      <tr>
+        <td>Intensité carbone (gCO₂e/km)</td>
+        <td>{{ resultats?.prosIntensiteCarboneDesDeplacemeents_gCo2eParKm }}</td>
+        <td>{{ resultats?.stagesIntensiteCarboneDesDeplacemeents_gCo2eParKm }}</td>
+        <td>{{ resultats?.semestresIntensiteCarboneDesDeplacemeents_gCo2eParKm }}</td>
+      </tr>
+      <tr>
+        <td>Intensité carbone (kgCO₂e/départ)</td>
+        <td>{{ resultats?.prosIntensiteCarboneDesDeplacemeents_kgCo2eParDepart }}</td>
+        <td>{{ resultats?.stagesIntensiteCarboneDesDeplacemeents_kgCo2eParDepart }}</td>
+        <td>{{ resultats?.semestresIntensiteCarboneDesDeplacemeents_kgCo2eParDepart }}</td>
+      </tr>
+      </tbody>
+    </table>
+    </div>
   </div>
   <app-save-footer [path]="ONGLET_KEYS.MobInternationale" (estTermineChange)="onEstTermineChange($event)"></app-save-footer>
 </div>

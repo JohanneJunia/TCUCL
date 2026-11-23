@@ -1,28 +1,81 @@
 .main-container {
   background-color: #e6f0ff;
   min-height: 100vh;
-  padding: 20px;
+  padding: 20px 40px 80px;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 }
 
-h2 {
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+
+.help-icon {
+  cursor: help;
+  display: inline-flex;
+  align-items: center;
   color: #2c3e50;
 }
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0;
+  color: #2c3e50;
+}
+
+.panels-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2.5rem;
+  flex: 1 1 auto;
+  box-sizing: border-box;
+}
+
+.left-panel {
+  flex: 1.4;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.right-panel {
+  flex: 1;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  min-width: 0;
+  overflow-x: auto;
+
+  h2 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+}
+
 .data-table {
-  min-width: max-content;
+  width: 100%;
   border-collapse: collapse;
   table-layout: auto;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .data-table th,
 .data-table td {
-  padding: 0.5rem 0.8rem;
-  text-align: left;
+  padding: 0.6rem 0.8rem;
+  text-align: center;
   border-bottom: 1px solid #e0e0e0;
   white-space: nowrap;
 }
@@ -36,97 +89,48 @@ h2 {
 
 .data-table tbody td:first-child,
 .data-table thead th[rowspan] {
-  min-width: 180px;
+  min-width: 150px;
   text-align: left;
   background-color: #fafafa;
 }
 
-/* Distance & trips columns */
 .data-table thead th[colspan],
 .data-table tbody td:not(:first-child) {
-  min-width: 180px;
+  min-width: 110px;
 }
 
 .value-input {
   width: 100%;
-  min-width: 100px;
-  padding: 0.3rem 0.5rem;
+  padding: 0.35rem 0.5rem;
   font-size: 0.9rem;
   border-radius: 6px;
   border: 1px solid #ccc;
+  text-align: center;
   box-sizing: border-box;
-}
 
-.value-input:focus {
-  outline: none;
-  border-color: #3498db;
-  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+  &:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.15);
+  }
 }
 
 .data-table tbody tr:nth-child(even) td {
   background-color: #f9f9f9;
 }
 
-.consumption-button {
-  width: 100%;
-  background-color: #d1d1d1;
-  border: none;
-  padding: 0.2em;
-  border-radius: 8px;
-  font-size: 1em;
-  font-weight: bold;
-}
-
-.value-input {
-  padding: 0.4m;
-  text-align: center;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
-.unit-select {
-  width: 100%;
-  padding: 0.4em;
-  font-size: 1em;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  background-color: white;
-}
-.content-panels,
-.panels-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 3rem;
-  padding: 2rem 4rem;
-  flex: 1;
-  box-sizing: border-box;
-}
-
-.left-panel {
-  flex: 2;
-}
-
-.right-panel {
-  overflow-x: auto;
-}
-
 .result-table {
   width: 100%;
-  min-width: max-content; 
   border-collapse: collapse;
   table-layout: auto;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .result-table th,
 .result-table td {
-  padding: 1rem 1.2rem;
+  padding: 0.8rem 1rem;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
-
- 
   white-space: normal;
   word-break: break-word;
 }
@@ -135,16 +139,18 @@ h2 {
   background-color: #f3f3f3;
   font-weight: 600;
   color: #2c3e50;
+  text-align: center;
 }
 
 .result-table tbody td:first-child {
   font-weight: 500;
-  min-width: 280px;
+  min-width: 180px;
   background-color: #fafafa;
 }
 
 .result-table tbody td:not(:first-child) {
-  min-width: 160px; 
+  min-width: 80px;
+  text-align: right;
   background-color: #ffffff;
 }
 

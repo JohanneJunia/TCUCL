@@ -35,7 +35,7 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
     </label>
 
     <label *ngIf="nouveauBatiment.acvBatimentRealisee === true">
-      Émissions de GES issues de l'ACV, sur toute la durée de vie (tCO2e) <span class="requis">*</span>
+      Émissions de GES issues de l'ACV, sur toute la durée de vie (tCO₂e) <span class="requis">*</span>
       <input type="number" min="0" [(ngModel)]="nouveauBatiment.emissionsGesReellesTCO2"/>
       <small class="aide">La valeur est répartie sur {{ DUREE_AMORTISSEMENT_BATIMENT }} ans dans le calcul.</small>
     </label>
@@ -93,12 +93,12 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
         <th>Date construction</th>
         <th>Dernière rénovation</th>
         <th>ACV</th>
-        <th>Émissions ACV (tCO2e)</th>
+        <th>Émissions ACV (tCO₂e)</th>
         <th>Type</th>
         <th>Surface (m²)</th>
         <th>Structure</th>
         <th>Prise en compte {{ anneeBilan }}</th>
-        <th>Émissions (tCO2e/an)</th>
+        <th>Émissions (tCO₂e/an)</th>
         <th>Action</th>
       </tr>
       </thead>
@@ -130,7 +130,7 @@ Les bâtiments qui ont été renseignées les années précédentes sont encore 
 
   <!-- Section 2 : Entretien et rénovations -->
   <h2>Entretien et rénovations</h2>
-  <span class="help-icon" title="Merci de renseigner les petites rénovations qui ne concernent qu'un lot : par exemple si vous avez refait toutes les peintures et sols des 2 premiers étages ou si vous avez refait toutes les façades et menuiseries d'une façade… Merci donc de renseigner le type de travaux, l'année des travaux et la durée d'amortissement comptable choisie. Ensuite, si vous avez réalisé une analyse en cycle de vie, vous pouvez renseigner la donnée en Tonnes de CO2 sinon, renseigner le type de bâtiment, la surface concernée par les travaux et la durée d'amortissement. Attention, la surface concernée est celle impactée par les travaux. Par exemple, si vous installez une nouvelle centrale de traitement d'air dans un local de 30m² mais qui traitera l'air de 300m² de bâtiment, la valeur correspondante est 300m².
+  <span class="help-icon" title="Merci de renseigner les petites rénovations qui ne concernent qu'un lot : par exemple si vous avez refait toutes les peintures et sols des 2 premiers étages ou si vous avez refait toutes les façades et menuiseries d'une façade… Merci donc de renseigner le type de travaux, l'année des travaux et la durée d'amortissement comptable choisie. Ensuite, si vous avez réalisé une analyse en cycle de vie, vous pouvez renseigner la donnée en tCO₂e sinon, renseigner le type de bâtiment, la surface concernée par les travaux et la durée d'amortissement. Attention, la surface concernée est celle impactée par les travaux. Par exemple, si vous installez une nouvelle centrale de traitement d'air dans un local de 30m² mais qui traitera l'air de 300m² de bâtiment, la valeur correspondante est 300m².
 Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automatiquement les travaux précédents qui sont encore en cours d'amortissement.">
         <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="black"></circle>
@@ -285,7 +285,7 @@ Merci de ne renseigner que vos travaux de l'année, l'outil réintègre automati
       <thead>
       <tr>
         <th>Poste</th>
-        <th>Total (tCO2e/an)</th>
+        <th>Total (tCO₂e/an)</th>
       </tr>
       </thead>
       <tbody>

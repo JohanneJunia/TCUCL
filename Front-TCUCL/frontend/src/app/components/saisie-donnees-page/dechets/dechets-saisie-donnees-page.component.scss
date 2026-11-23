@@ -9,20 +9,20 @@
 
 .panels-wrapper {
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 3rem;
-  padding: 2rem 4rem;
+  padding: 2rem 3rem;
+  box-sizing: border-box;
 }
 
 .left-panel {
-  flex: 1.5; // augmente la taille
+  flex: 1.4;
   background-color: white;
   border-radius: 8px;
   padding: 1.5rem 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  min-width: 0; // permet le redimensionnement fluide
+  min-width: 0;
 }
 
 .right-panel {

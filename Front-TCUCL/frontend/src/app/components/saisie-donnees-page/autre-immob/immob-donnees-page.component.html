@@ -33,7 +33,7 @@
               <th>Puissance totale (kW)</th>
               <th>Durée de vie</th>
               <th>Émissions GES connues ?</th>
-              <th>Émissions de GES réelles (tCO2e/an)</th>
+              <th>Émissions de GES réelles (tCO₂e/an)</th>
             </tr>
           </thead>
           <tbody>
@@ -215,39 +215,40 @@
         </table>
       </div>
     </div>
-  </div>
-  <div *ngIf="resultats" class="bottom-panel">
-    <h2>Résultats des émissions GES</h2>
-    <div class="total-highlight">
-      <span class="total-label">Total autres immobilisations</span>
-      <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
+
+    <div *ngIf="resultats" class="right-panel">
+      <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total autres immobilisations</span>
+        <span class="total-value">{{ totalEmissions | number:'1.2-2' }} tCO₂e</span>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Poste</th>
+            <th>Émissions GES</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Machines électriques et outillages</td>
+            <td>
+              {{
+                (resultats.totalPosteBatiment && resultats.totalPosteBatiment !== 'NaN' ? resultats.totalPosteBatiment : 0) | number:'1.2-2'
+              }} tCO₂e
+            </td>
+          </tr>
+          <tr>
+            <td>Installations photovoltaïques</td>
+            <td>
+              {{
+                (resultats.totalPostePhotovoltaique && resultats.totalPostePhotovoltaique !== 'NaN' ? resultats.totalPostePhotovoltaique : 0) | number:'1.2-2'
+              }} tCO₂e
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <table class="data-table">
-      <thead>
-        <tr>
-          <th>Poste</th>
-          <th>Émissions GES</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Machines électriques et outillages</td>
-          <td>
-            {{
-              (resultats.totalPosteBatiment && resultats.totalPosteBatiment !== 'NaN' ? resultats.totalPosteBatiment : 0) | number:'1.2-2'
-            }} tCO₂e
-          </td>
-        </tr>
-        <tr>
-          <td>Installations photovoltaïques</td>
-          <td>
-            {{
-              (resultats.totalPostePhotovoltaique && resultats.totalPostePhotovoltaique !== 'NaN' ? resultats.totalPostePhotovoltaique : 0) | number:'1.2-2'
-            }} tCO₂e
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 
   <app-save-footer

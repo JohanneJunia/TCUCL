@@ -5,45 +5,73 @@ import { Observable, of } from 'rxjs';
 import { tap, catchError, map } from 'rxjs/operators';
 import {ApiEndpoints} from './api-endpoints';
 
+export interface UserInfo {
+  id: number;
+  nom: string;
+  prenom: string;
+  email: string;
+  estAdmin: boolean;
+  superAdmin: boolean;
+  entiteNom: string;
+  entiteId: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   isAuthenticated = signal(false);
-  // Aligner le type sur le UtilisateurDto renvoyé par le backend
-  userInfo = signal<{
-    id: number;
-    nom: string;
-    prenom: string;
-    email: string;
-    estAdmin: boolean;
-    superAdmin: boolean;
-    entiteNom: string;
-    entiteId: number;
-  } | null>(null);
+  userInfo = signal<UserInfo | null>(null);
 
-  constructor(private router: Router, private http: HttpClient) {}
+  constructor(private router: Router, private http: HttpClient) {
+    this.restoreSession();
+  }
+
+  private restoreSession(): void {
+    const token = this.getToken();
+    const storedUser = localStorage.getItem('user_info');
+    if (token) {
+      if (this.isTokenExpired(token)) {
+        this.logout();
+        return;
+      }
+      this.isAuthenticated.set(true);
+      if (storedUser) {
+        try {
+          this.userInfo.set(JSON.parse(storedUser));
+        } catch (e) {
+          console.error('Erreur parsing user_info', e);
+        }
+      }
+    }
+  }
+
+  isTokenExpired(token: string): boolean {
+    try {
+      const parts = token.split('.');
+      if (parts.length !== 3) return false;
+      const payload = JSON.parse(atob(parts[1]));
+      if (payload.exp && Date.now() >= payload.exp * 1000) {
+        return true;
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  }
 
   login(email: string, password: string): Observable<boolean> {
     const loginData = { email: email, mdp: password };
 
     return this.http
-      .post<{ jeton: string; user: {
-        id: number;
-        nom: string;
-        prenom: string;
-        email: string;
-        estAdmin: boolean;
-        superAdmin: boolean;
-        entiteNom: string;
-        entiteId: number;
-      } }>(
+      .post<{ jeton: string; user: UserInfo }>(
         ApiEndpoints.auth.connexion(),
         loginData
       )
       .pipe(
         tap(response => {
           localStorage.setItem('auth_token', response.jeton);
+          localStorage.setItem('user_info', JSON.stringify(response.user));
           this.userInfo.set(response.user);
           this.isAuthenticated.set(true);
         }),
@@ -60,6 +88,7 @@ export class AuthService {
     this.isAuthenticated.set(false);
     this.userInfo.set(null);
     localStorage.removeItem('auth_token');
+    localStorage.removeItem('user_info');
     this.router.navigate(['/login']);
   }
 
@@ -78,7 +107,6 @@ export class AuthService {
         map(() => true)
       );
   }
-
 
   getUserInfo(): any {
     return this.userInfo;

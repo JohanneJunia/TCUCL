@@ -1,5 +1,6 @@
 <div class="main-container">
-  <div class="left-panel">
+  <div class="panels-wrapper">
+    <div class="left-panel">
     <div class="page-title">
       <h2>Émissions fugitives</h2>
       <span class="help-icon"
@@ -122,19 +123,29 @@
       </div>
     </div>
   </div>
-  <div *ngIf="resultatEmissionGES !== null" class="result-table-container">
-    <table class="result-table">
-      <thead>
-      <tr>
-        <th>Total des émissions GES (tCO₂e)</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>{{ (resultatEmissionGES || 0) | number: '1.2-2' }} tCO₂e</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="right-panel">
+      <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total émissions fugitives</span>
+        <span class="total-value">{{ (resultatEmissionGES || 0) | number: '1.2-2' }} tCO₂e</span>
+      </div>
+      <table class="data-table">
+        <thead>
+        <tr>
+          <th>Indicateur</th>
+          <th>Valeur</th>
+          <th>Unité</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>Total des émissions fugitives</td>
+          <td>{{ (resultatEmissionGES || 0) | number: '1.2-2' }}</td>
+          <td>tCO₂e</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
   <app-save-footer [path]="ONGLET_KEYS.EmissionsFugitives" (estTermineChange)="onEstTermineChange($event)"></app-save-footer>
 </div>

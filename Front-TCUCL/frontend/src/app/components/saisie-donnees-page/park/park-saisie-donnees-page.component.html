@@ -1,101 +1,112 @@
 <div class="main-container">
-  <div class="left-panel">
-    <div class="page-title">
-      <h2>Parkings</h2>
-      <span class="help-icon" title="Merci de renseigner uniquement les parkings de moins de 10 ans">
-        <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="black"></circle>
-          <rect x="11" y="10" width="2" height="6" fill="white"></rect>
-          <circle cx="12" cy="8" r="1" fill="white"></circle>
-        </svg>
-      </span>
-    </div>
-    <details>
-      <summary><strong>Saisir un nouveau parking</strong></summary>
-
-      <div class="form-column">
-        <label>Nom / Adresse :
-          <input type="text" [(ngModel)]="nouveauParking.nomOuAdresse" />
-        </label>
-
-        <label>Date de construction :
-          <input type="date" [(ngModel)]="nouveauParking.dateConstruction" />
-        </label>
-
-        <label>Type :
-          <select [(ngModel)]="nouveauParking.type">
-            <option *ngFor="let t of parkingTypes" [ngValue]="t">{{ t }}</option>
-          </select>
-        </label>
-
-        <label>Surface (m²) :
-          <input type="number" [(ngModel)]="nouveauParking.nombreM2" />
-        </label>
-
-        <label>Type de structure :
-          <select [(ngModel)]="nouveauParking.typeStructure">
-            <option *ngFor="let ts of structureTypes" [ngValue]="ts">{{ ts }}</option>
-          </select>
-        </label>
-
-        <label>Émissions de GES connues ?
-          <select [(ngModel)]="nouveauParking.emissionsGesConnues" (ngModelChange)="onEmissionsConnuesChange($event)">
-            <option [ngValue]="false">Non</option>
-            <option [ngValue]="true">Oui</option>
-          </select>
-        </label>
-
-        <label *ngIf="nouveauParking.emissionsGesConnues">Émissions de GES réelles (tCO2e/an) :
-          <input type="number" [(ngModel)]="nouveauParking.emissionsGesReelles" />
-        </label>
+  <div class="panels-wrapper">
+    <div class="left-panel">
+      <div class="page-title">
+        <h2>Parkings</h2>
+        <span class="help-icon" title="Merci de renseigner uniquement les parkings de moins de 10 ans">
+          <svg width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="black"></circle>
+            <rect x="11" y="10" width="2" height="6" fill="white"></rect>
+            <circle cx="12" cy="8" r="1" fill="white"></circle>
+          </svg>
+        </span>
       </div>
+      <details>
+        <summary><strong>Saisir un nouveau parking</strong></summary>
 
-      <button type="button" (click)="ajouterParking()">Ajouter ce parking</button>
-    </details>
+        <div class="form-column">
+          <label>Nom / Adresse :
+            <input type="text" [(ngModel)]="nouveauParking.nomOuAdresse" />
+          </label>
 
-    <div *ngIf="parkingOnglet.parkings.length > 0" class="added-parkings">
-      <h4>Parkings enregistrés :</h4>
+          <label>Date de construction :
+            <input type="date" [(ngModel)]="nouveauParking.dateConstruction" />
+          </label>
+
+          <label>Type :
+            <select [(ngModel)]="nouveauParking.type">
+              <option *ngFor="let t of parkingTypes" [ngValue]="t">{{ t }}</option>
+            </select>
+          </label>
+
+          <label>Surface (m²) :
+            <input type="number" [(ngModel)]="nouveauParking.nombreM2" />
+          </label>
+
+          <label>Type de structure :
+            <select [(ngModel)]="nouveauParking.typeStructure">
+              <option *ngFor="let ts of structureTypes" [ngValue]="ts">{{ ts }}</option>
+            </select>
+          </label>
+
+          <label>Émissions de GES connues ?
+            <select [(ngModel)]="nouveauParking.emissionsGesConnues" (ngModelChange)="onEmissionsConnuesChange($event)">
+              <option [ngValue]="false">Non</option>
+              <option [ngValue]="true">Oui</option>
+            </select>
+          </label>
+
+          <label *ngIf="nouveauParking.emissionsGesConnues">Émissions de GES réelles (tCO₂e/an) :
+            <input type="number" [(ngModel)]="nouveauParking.emissionsGesReelles" />
+          </label>
+        </div>
+
+        <button type="button" (click)="ajouterParking()">Ajouter ce parking</button>
+      </details>
+
+      <div *ngIf="parkingOnglet.parkings.length > 0" class="added-parkings">
+        <h4>Parkings enregistrés :</h4>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom / Adresse</th>
+              <th>Date de construction</th>
+              <th>Type</th>
+              <th>Surface (m²)</th>
+              <th>Structure</th>
+              <th>Émissions GES</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let parking of parkingOnglet.parkings; let i = index">
+              <td>{{ parking.nomOuAdresse }}</td>
+              <td>{{ parking.dateConstruction | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ parking.type }}</td>
+              <td>{{ parking.nombreM2 }}</td>
+              <td>{{ parking.typeStructure }}</td>
+              <td>{{ parking.emissionsGesConnues ? (parking.emissionsGesReelles + ' tCO₂e/an') : 'N/C' }}</td>
+              <td>
+                <button (click)="supprimerParking(i)">🗑️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="right-panel">
+      <h2>Résultats des émissions GES</h2>
+      <div class="total-highlight">
+        <span class="total-label">Total des émissions Parkings</span>
+        <span class="total-value">{{ (totalEmissionGES || 0) | number: '1.2-2' }} tCO₂e</span>
+      </div>
       <table class="data-table">
         <thead>
-          <tr>
-            <th>Nom / Adresse</th>
-            <th>Date de construction</th>
-            <th>Type</th>
-            <th>Surface (m²)</th>
-            <th>Structure</th>
-            <th>Émissions GES</th>
-            <th>Action</th>
-          </tr>
+        <tr>
+          <th>Indicateur</th>
+          <th>Valeur</th>
+          <th>Unité</th>
+        </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let parking of parkingOnglet.parkings; let i = index">
-            <td>{{ parking.nomOuAdresse }}</td>
-            <td>{{ parking.dateConstruction | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ parking.type }}</td>
-            <td>{{ parking.nombreM2 }}</td>
-            <td>{{ parking.typeStructure }}</td>
-            <td>{{ parking.emissionsGesConnues ? (parking.emissionsGesReelles + ' tCO₂e/an') : 'N/C' }}</td>
-            <td>
-              <button (click)="supprimerParking(i)">🗑️</button>
-            </td>
-          </tr>
+        <tr>
+          <td>Total parkings</td>
+          <td>{{ (totalEmissionGES || 0) | number: '1.2-2' }}</td>
+          <td>tCO₂e</td>
+        </tr>
         </tbody>
       </table>
     </div>
-  </div>
-  <div *ngIf="totalEmissionGES !== null" class="result-table-container">
-    <table class="result-table">
-      <thead>
-      <tr>
-        <th>Total des émissions GES (tCO₂e)</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td>{{ (totalEmissionGES || 0) | number: '1.2-2' }} tCO₂e</td>
-      </tr>
-      </tbody>
-    </table>
   </div>
   <app-save-footer [path]="ONGLET_KEYS.Parkings" (estTermineChange)="onEstTermineChange($event)"></app-save-footer>
 </div>
