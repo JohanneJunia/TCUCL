@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiEndpoints } from './api-endpoints';
 import { AuthService } from './auth.service';
@@ -16,6 +16,7 @@ export interface SyntheseEgesResult {
   achatGlobal: number | null;
   dechetGlobal: number | null;
   bilanCarboneTotalGlobal: number | null;
+  emissionEvitee?: number | null;
   /** Sum of scope/poste values returned by the API */
   bilanCarboneTotalScope?: number | null;
   /** Scope/poste values */
@@ -68,6 +69,18 @@ export class SyntheseEgesService {
     return this.http.get<SyntheseEgesResult>(
       ApiEndpoints.SyntheseEges.getByEntite(entiteId, annee),
       { headers }
+    );
+  }
+
+  exportExcel(entiteId: number, annee: number): Observable<HttpResponse<Blob>> | undefined {
+    const token = this.auth.getToken();
+    if (!token) return undefined;
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    return this.http.get(
+      ApiEndpoints.SyntheseEges.exportExcel(entiteId, annee),
+      { headers, responseType: 'blob', observe: 'response' }
     );
   }
 }

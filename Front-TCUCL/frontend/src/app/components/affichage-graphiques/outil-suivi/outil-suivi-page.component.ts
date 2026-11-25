@@ -45,6 +45,10 @@ export class OutilSuiviPageComponent implements OnInit {
   total: number = 0;
   scopes: ScopePoste[] = [];
   scopesTotal: number = 0;
+  exportingExcel: boolean = false;
+  exportingBegesPdf: boolean = false;
+  syntheseExportError: string | null = null;
+  private lastSyntheseResult: import('../../../services/synthese-eges.service').SyntheseEgesResult | null = null;
   currentYear: number = new Date().getFullYear();
   consoEnergieFinale?: number;
   surfaceTotaleBatiments?: number;
@@ -673,6 +677,7 @@ export class OutilSuiviPageComponent implements OnInit {
       .getSynthese(entiteToUse, this.selectedSyntheseYear)
       ?.subscribe({
         next: res => {
+          this.lastSyntheseResult = res;
           const mapping: Record<string, number | null | undefined> = {
             'Emissions fugitives': res.emissionFugitivesGlobal,
             'Energie': res.energieGlobal,
@@ -962,5 +967,170 @@ export class OutilSuiviPageComponent implements OnInit {
     }
     this.downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8;' }), `export_${key}.csv`);
     this.closeMenus();
+  }
+
+  exportSyntheseExcel(): void {
+    const entiteToUse = this.selectedEntiteId;
+    if (entiteToUse === undefined || entiteToUse === null || !this.selectedSyntheseYear) return;
+
+    const obs = this.syntheseService.exportExcel(entiteToUse, this.selectedSyntheseYear);
+    if (!obs) return;
+
+    this.exportingExcel = true;
+    this.syntheseExportError = null;
+
+    obs.subscribe({
+      next: resp => {
+        this.exportingExcel = false;
+        const blob = resp.body;
+        if (!blob) {
+          this.syntheseExportError = 'Fichier Excel vide reçu du serveur.';
+          return;
+        }
+        const disposition = resp.headers.get('Content-Disposition') || '';
+        const match = disposition.match(/filename\*?=(?:UTF-8'')?["']?([^"';]+)["']?/i);
+        const slug = this.slugifyFilename(this.entiteName || `entite-${entiteToUse}`);
+        const fallbackName = `bilan-carbone_${slug}_${this.syntheseYearRangeLabel}.xlsx`;
+        const filename = match?.[1] ? decodeURIComponent(match[1]) : fallbackName;
+        this.downloadBlob(blob, filename);
+      },
+      error: err => {
+        this.exportingExcel = false;
+        console.error('Erreur export Excel synthèse', err);
+        this.syntheseExportError = 'Impossible de générer l’export Excel pour cet établissement.';
+      }
+    });
+  }
+
+  async exportSyntheseBegesPdf(): Promise<void> {
+    if (!this.selectedSyntheseYear) return;
+    this.exportingBegesPdf = true;
+    this.syntheseExportError = null;
+
+    try {
+      const [{ jsPDF }, { default: autoTable }] = await Promise.all([
+        import('jspdf'),
+        import('jspdf-autotable')
+      ]);
+
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+      const entiteLabel = this.entiteName || `Entité #${this.selectedEntiteId}`;
+      const dateStr = new Date().toLocaleDateString('fr-FR');
+      const fmt = (v: number | undefined | null, digits = 2) =>
+        v !== undefined && v !== null && Number.isFinite(v)
+          ? v.toLocaleString('fr-FR', { minimumFractionDigits: digits, maximumFractionDigits: digits })
+          : '-';
+
+      // En-tête document
+      doc.setFontSize(15);
+      doc.setTextColor(31, 78, 120);
+      doc.text('Bilan des Émissions de Gaz à Effet de Serre (BEGES)', 40, 44);
+
+      doc.setFontSize(10);
+      doc.setTextColor(60, 60, 60);
+      doc.text(`Établissement : ${entiteLabel}`, 40, 64);
+      doc.text(`Année universitaire : ${this.syntheseYearRangeLabel}`, 40, 79);
+      doc.text(`Date d'export : ${dateStr}`, 40, 94);
+
+      // Tableau 1 : Synthèse par poste
+      const totalGlobal = this.total || 0;
+      const posteRows = this.sectors.map(s => [
+        s.label,
+        fmt(s.value),
+        totalGlobal > 0 ? `${fmt((s.value / totalGlobal) * 100, 1)} %` : '0,0 %'
+      ]);
+      posteRows.push(['Bilan carbone total', fmt(totalGlobal), totalGlobal > 0 ? '100,0 %' : '0,0 %']);
+
+      autoTable(doc, {
+        startY: 112,
+        head: [['Poste d\'émission', 'Émissions (tCO2e)', 'Part (%)']],
+        body: posteRows,
+        theme: 'grid',
+        headStyles: { fillColor: [31, 78, 120], textColor: 255, fontSize: 9 },
+        bodyStyles: { fontSize: 8.5 },
+        columnStyles: { 1: { halign: 'right' }, 2: { halign: 'right' } },
+        didParseCell: data => {
+          if (data.section === 'body' && data.row.index === posteRows.length - 1) {
+            data.cell.styles.fontStyle = 'bold';
+            data.cell.styles.fillColor = [235, 241, 248];
+          }
+        }
+      });
+
+      // Tableau 2 : Bilan réglementaire BEGES par Scope / Poste
+      const scopeRows = this.scopes.map(sc => [sc.label, fmt(sc.value)]);
+      scopeRows.push(['Bilan carbone total (Scopes)', fmt(this.scopesTotal)]);
+      if (this.lastSyntheseResult?.emissionEvitee != null) {
+        scopeRows.push(['Émissions évitées (hors bilan)', fmt(Number(this.lastSyntheseResult.emissionEvitee))]);
+      }
+
+      const afterPostesY = (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable.finalY + 20 : 340;
+      autoTable(doc, {
+        startY: afterPostesY,
+        head: [['Poste réglementaire BEGES', 'Émissions (tCO2e)']],
+        body: scopeRows,
+        theme: 'grid',
+        headStyles: { fillColor: [31, 78, 120], textColor: 255, fontSize: 9 },
+        bodyStyles: { fontSize: 8 },
+        columnStyles: { 1: { halign: 'right' } },
+        didParseCell: data => {
+          const label = String(data.row.raw && Array.isArray(data.row.raw) ? data.row.raw[0] : '');
+          if (data.section === 'body' && label.startsWith('Bilan carbone total')) {
+            data.cell.styles.fontStyle = 'bold';
+            data.cell.styles.fillColor = [235, 241, 248];
+          }
+        }
+      });
+
+      // Tableau 3 : Indicateurs de surface et d'intensité
+      const indRows = [
+        ['Effectif total (étudiants + salariés)', this.effectifTotal !== undefined ? String(this.effectifTotal) : '-', 'usagers'],
+        ['Surface totale des campus / bâtiments', fmt(this.surfaceTotaleBatiments), 'm²'],
+        ['Bilan carbone par usager', fmt(this.bilanCarboneTotalParUsager), 'kgCO2e/usager'],
+        ['Bilan carbone par m²', fmt(this.bilanCarboneTotalParM2), 'kgCO2e/m²'],
+        ['Consommation d\'énergie finale par m²', fmt(this.consoEnergieFinaleParM2), 'kWh/m²'],
+        ['Intensité carbone de l\'énergie par m²', fmt(this.intensiteCarboneParM2), 'kgCO2e/m²']
+      ];
+
+      const afterScopesY = (doc as any).lastAutoTable?.finalY ? (doc as any).lastAutoTable.finalY + 20 : 600;
+      autoTable(doc, {
+        startY: afterScopesY,
+        head: [['Indicateur', 'Valeur', 'Unité']],
+        body: indRows,
+        theme: 'grid',
+        headStyles: { fillColor: [31, 78, 120], textColor: 255, fontSize: 9 },
+        bodyStyles: { fontSize: 8.5 },
+        columnStyles: { 1: { halign: 'right' } }
+      });
+
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setTextColor(130, 130, 130);
+        doc.text(
+          `TCUCL — ${entiteLabel} (${this.syntheseYearRangeLabel}) — Page ${i}/${pageCount}`,
+          40,
+          doc.internal.pageSize.getHeight() - 20
+        );
+      }
+
+      const slug = this.slugifyFilename(entiteLabel);
+      doc.save(`bilan-beges_${slug}_${this.syntheseYearRangeLabel}.pdf`);
+    } catch (e) {
+      console.error('Erreur export PDF BEGES', e);
+      this.syntheseExportError = 'Impossible de générer le PDF BEGES.';
+    } finally {
+      this.exportingBegesPdf = false;
+    }
+  }
+
+  private slugifyFilename(input: string): string {
+    return input
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'etablissement';
   }
 }

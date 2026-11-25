@@ -572,13 +572,35 @@
   <!-- Container Onglet Synthèse EGES -->
   <ng-container *ngIf="activeTab === 'synthese'">
     <div class="synthese-content">
-      <div class="filters" style="margin-bottom: 20px;">
+      <div class="filters" style="margin-bottom: 20px; flex-wrap: wrap;">
         <label for="syntheseYear">Année : </label>
         <select id="syntheseYear" [(ngModel)]="selectedSyntheseYear" (ngModelChange)="onSyntheseYearChange($event)" style="padding: 6px 12px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px;">
           <option *ngFor="let year of syntheseYears" [ngValue]="year.value">
             {{ year.label }} {{ year.value === currentYear ? '(courante)' : '' }}
           </option>
         </select>
+
+        <div style="margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap;">
+          <button
+            class="btn"
+            (click)="exportSyntheseExcel()"
+            [disabled]="exportingExcel || !selectedSyntheseYear"
+            title="Télécharger l'export Excel détaillé (Synthèse par poste + Bilan BEGES)">
+            {{ exportingExcel ? 'Export Excel...' : 'Exporter Excel (.xlsx)' }}
+          </button>
+          <button
+            class="btn"
+            style="background: #1f7bb6;"
+            (click)="exportSyntheseBegesPdf()"
+            [disabled]="exportingBegesPdf || !selectedSyntheseYear"
+            title="Télécharger le Bilan BEGES au format PDF">
+            {{ exportingBegesPdf ? 'Export PDF...' : 'Exporter PDF (BEGES)' }}
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="syntheseExportError" class="alert" style="background: #fdecea; color: #b71c1c; padding: 10px 14px; border-radius: 6px; margin-bottom: 16px;">
+        {{ syntheseExportError }}
       </div>
 
 

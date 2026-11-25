@@ -120,7 +120,9 @@ export const ApiEndpoints = {
 
   SyntheseEges: {
     getByEntite: (entiteId: number, annee: number) =>
-      `${BASE_URL}/synthese-eges/${entiteId}?annee=${annee}`
+      `${BASE_URL}/synthese-eges/${entiteId}?annee=${annee}`,
+    exportExcel: (entiteId: number, annee: number) =>
+      `${BASE_URL}/synthese-eges/${entiteId}/export-excel?annee=${annee}`
   },
 
   auth: {
